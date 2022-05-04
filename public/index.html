@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>ViewerWeb</title>
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+		
+		<div id="pannel" >
+			<label class="button" id="selector">File Selector</label>
+			<div id="souspannel">
+				<form>
+					<p>Upload an image with the file dialog or by dragging and dropping image onto the screen</p>
+					<input type="file" id="fileElem" multiple accept="image/*">
+					<label class="button" for="fileElem">Select a file</label>
+				</form>
+
+				<div id="gallery"/>
+					<img src='nuitEtoile.jpg' id="img" class=" drop">
+				</div>
+			</div>
+		</div>
+
+		<div id="drop-area" class="hidden"></div>
+
+		<script type="importmap">
+			{
+				"imports": { "three": "https://unpkg.com/three/build/three.module.js" }
+			}
+		</script>
+		<script type="module" src="drag&drop.js"></script>
+        <script type="module" src="mythree.js"></script>	
+	</body>
+</html>

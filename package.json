@@ -1,0 +1,21 @@
+{
+  "name": "web-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "express": "npm install express",
+    "three": "npm install three",
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.1",
+    "install": "^0.13.0",
+    "npm": "^8.7.0",
+    "three": "^0.139.2"
+  }
+}
