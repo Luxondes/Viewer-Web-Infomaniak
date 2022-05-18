@@ -8,13 +8,8 @@ const upload = multer({ dest: "uploads/" });
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+// projet frontend à lancer
 app.use(express.static('public'));
-
-app.get('/test', (req, res) =>
-{
-  console.log("TEST");
-  res.send({rep:"test", success:true});
-});
 
 // On traite les requetes POST vers l'URL upload_files,
 app.post("/upload_files",
@@ -23,26 +18,26 @@ app.post("/upload_files",
 
   function uploadFiles(req, res)
   {
-    // Pour chaque fichier chargé on fait appel à la fonction de décompression
-    //req.files.forEach(file => unzip(file));
-    //res.json({success:true});
+    // fonction de décompression
     unzipRec(req.files, res);
   }
   
   function unzipRec(files, res, rep=[])
   {
     if(0 == files.length)
+      // envoie de la liste d'url en front
       res.json({success:true, files:rep});
     else
     {
       let file = files.shift();
+      // dézippage
       decompress(file.path, "public/files").then(unzippedFiles =>
       {
         unzippedFiles.forEach(unzippedFile =>
         {
-          rep.push('files/'+unzippedFile.path);
+          rep.push('files/'+unzippedFile.path); // ajout des url à la liste d'url
         });
-        unzipRec(files, res, rep);
+        unzipRec(files, res, rep); // appel récursif
       });
     }
   }

@@ -1,35 +1,37 @@
-# web-server
+## Viewer Web 3D
 
-Ce sous-dossier permet de visualiser notre plan imagé, en 3D à l'aide d'un serveur local. Pour le moment le serveur écoute sur le port 3000.
+Ce dépot contient l'avancée des travaux concernant le Viewer Web 3D.
+
+Il se déroule dans le cadre de mon stage de fin de Licence Informatique à l'Université de Lille, dans l'entreprise Luxondes.
 
 ---
 
-- Pour télécharger les fichiers de ce dépot, se palcer dans un terminal et effectuer la commande suivante :
+Il existe deux moyen de visualiser ces derniers :
 
-```bash
-$ git clone https://github.com/Luxondes/ViewerWeb.git
-```
+- Se rendre à l'adresse suivante : https://viewer-luxondes.com
 
-Ensuite, se déplacer dans le dossier `web-werver` concerné.
+- Cloner ce dépot et lancer le projet en serveur local :
 
-- Il faudra ensuite installer le framework `express.js` et la librairie `three.js`.
+  - Pour cloner le dépot, se placer dans un terminal et utiliser la commande suivante à l'endroit souhaité :
 
-Voici donc la commande pour `express.js` :
+    ```bash
+    $ git clone https://github.com/Luxondes/Viewer-Web-Infomaniak.git
+    ```
 
-```
-$ npm run express
-```
+  - Pour lancer le serveur, utiliser la commande suivante à la racine du projet :
 
-Et celle pour `three.js` :
+    ```cmd
+    $ npm run start
+    ```
 
-```
-$ npm run three
-```
+  - Pour une utilisation demandant des modifications de code, il est possible d'utiliser la commande suivante :
 
-- Enfin pour démarrer le serveur local, la commande est :
+    ```cmd
+    $ npm run startDev
+    ```
 
-```
-$ npm run start
-```
+    Elle utilise Nodemon, ce qui permet le reboot du serveur local à chaque modification d'un fichier du projet.
 
-- Le rendu est visualisable à l'adresse `localhost:3000` dans votre navigateur.
+  * Le rendu est visualisable à l'adresse http://localhost:3000 dans votre navigateur.
+
+    (P.s. Les navigateurs firefox et safari ne sont visiblement pas à jour quant aux technologies que nous utilisons, il est donc préférable en attendant d'utiliser pour exmple Chrome, Opera ou Edge.)

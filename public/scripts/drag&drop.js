@@ -8,12 +8,13 @@ let pannel = document.getElementById ("pannel");
 let hiddenSelector = false;
 let hiddenDrop = false;
 
-
+// preventDefault les événements liés au drag & drop
 ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
   dropArea.addEventListener(eventName, preventDefaults, false);   
   document.body.addEventListener(eventName, preventDefaults, false);
 })
 
+// gestion affichage zone de drop
 ;['dragleave', 'drop'].forEach(eventName => {
   dropArea.addEventListener(eventName, hidden);
 })
@@ -21,12 +22,14 @@ let hiddenDrop = false;
 document.body.addEventListener('dragenter', unhidden);
 dropArea.addEventListener('dragenter', unhidden);
 
+// gestion affichage menu 
 selector.addEventListener('click', hiddenS);
 
+// ajout des evenements apres avoir ajouté ou zip (drag&drop ou gestionnaire fichier)
 dropArea.addEventListener('drop', handleDrop, false);
 fileElem.addEventListener('change', handleDl, false);
 
-
+// fonctions affichage ou non
 function unhidden(){
     dropArea.classList.remove('hidden');
     hiddenDrop = false;
@@ -51,17 +54,19 @@ function hiddenS(){
   }
 }
 
+// fonction preventDefault
 function preventDefaults(e){
   e.preventDefault();
   e.stopPropagation();
 }
 
-
+// récupération files gestionnaire fichier
 function handleDl(e){
   let files = this.files;
   handleFiles(files);
 }
 
+// récupération files drag&drop
 function handleDrop(e) {
   let dt = e.dataTransfer;
   let files = dt.files;
@@ -69,11 +74,12 @@ function handleDrop(e) {
   handleFiles(files);
 }
 
+
 function handleFiles(files) {
   console.log("FILES SUBMITTED");
-  const formData = new FormData();
+  const formData = new FormData(); // création formData
   files = [...files];
-  files.forEach(file => formData.append("files", file));
+  files.forEach(file => formData.append("files", file)); // ajout des fichiers au formData
   console.log(formData);
   // appel de l'URL upload_files
   fetch("./upload_files", {
@@ -95,22 +101,18 @@ function loadFiles(urls)
 {
   const container = document.getElementById('container');
   console.log(container);
+  // récupére puis traite les url en fonction des types de fichiers
   urls.forEach(url =>
   {
     let element = document.createElement('div');
     switch(url.split('.').at(-1))
     {
-      case 'jpg':
-        let img = document.createElement('img');
+      case 'jpg': // si image, modifie l'image du menu et du plan
+        let img = document.getElementById('img');
         img.src = url;
-        element.appendChild(img);
+        main();
         break;
-      case 'txt':
-        let anchor = document.createElement('a');
-        anchor.href = url;
-        anchor.innerHTML = url;
-        element.appendChild(anchor);
-        break;
+      // sinon création liens fichiers xml et dat
       case 'xml':
         let anchorbis = document.createElement('a');
         anchorbis.href = url;
