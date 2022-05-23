@@ -20,13 +20,13 @@ Il existe deux moyen de visualiser ces derniers :
 
   - Pour lancer le serveur, utiliser la commande suivante à la racine du projet :
 
-    ```cmd
+    ```bash
     $ npm run start
     ```
 
   - Pour une utilisation demandant des modifications de code, il est possible d'utiliser la commande suivante :
 
-    ```cmd
+    ```bash
     $ npm run startDev
     ```
 
@@ -34,4 +34,4 @@ Il existe deux moyen de visualiser ces derniers :
 
   * Le rendu est visualisable à l'adresse http://localhost:3000 dans votre navigateur.
 
-    (P.s. Les navigateurs firefox et safari ne sont visiblement pas à jour quant aux technologies que nous utilisons, il est donc préférable en attendant d'utiliser pour exmple Chrome, Opera ou Edge.)
+    (P.s. Les navigateurs firefox et safari ne sont visiblement pas à jour quant aux technologies que nous utilisons, il est donc préférable en attendant d'utiliser pour exemple Chrome, Opera ou Edge.)

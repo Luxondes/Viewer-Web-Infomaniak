@@ -5,6 +5,7 @@ export function main(){
 
   //création scène
   const scene = new THREE.Scene();
+  //scene.background = new THREE.Color( 0xf1f1f1 );
   
   // création caméra
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);

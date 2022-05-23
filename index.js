@@ -1,15 +1,42 @@
 const express = require('express');
 const multer = require('multer');
 const decompress = require("decompress");
+const fs = require('fs');
+
 const app = express();
 
 // configuration de l'espace de travail de multer
 const upload = multer({ dest: "uploads/" });
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 // projet frontend à lancer
 app.use(express.static('public'));
+
+app.post("/upload_xml", readXml);
+
+function readXml(req, res)
+{
+  console.log(req.body.urls);
+  try {
+        let data = fs.readFileSync('./public/' + req.body.urls, 'utf8');
+        res.json({success:true, texte:data});
+      } catch (err) {
+          console.error(err);
+        }
+}
+// app.post("/upload_xml", (req, res) => {
+  
+  //   console.log(req.urls);
+//   try {
+//     // let data = fs.readFileSync(req.xmlurl, 'utf8');
+//     // res.json({success:true, texte:data});
+//     // console.log(data);
+//   } catch (err) {
+  //     console.error(err);
+  //   }
+  
+  // });
 
 // On traite les requetes POST vers l'URL upload_files,
 app.post("/upload_files",
@@ -41,5 +68,21 @@ app.post("/upload_files",
       });
     }
   }
+
+//supprime fichiers lorsque l'on quitte ou refresh la page
+app.post("/delete_signal", () => {
+  // supression ./public/files
+  if (fs.existsSync('./public/files')) fs.rm('./public/files', { recursive: true, force: true }, (err) => {
+    if (err) throw err });
+
+  // supression ./uploads
+  if (fs.existsSync('./uploads')) {
+    fs.rmSync('./uploads', { recursive: true, force: true }); // supprime dossier
+    fs.mkdir('./uploads', (error) => { // puis on le recrée vide pour le bon fonctionnement de multer
+      if (error) console.log(error);
+    });
+  }
+});
+
 
 app.listen(3000, () => console.log("server listening on port 3000"));
