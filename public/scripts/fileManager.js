@@ -8,6 +8,7 @@ let pannel = document.getElementById ("pannel");
 let hiddenSelector = false;
 let hiddenDrop = false;
 
+
 // preventDefault les événements liés au drag & drop
 ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
   dropArea.addEventListener(eventName, preventDefaults, false);   
@@ -76,11 +77,9 @@ function handleDrop(e) {
 
 
 function handleFiles(files) {
-  console.log("FILES SUBMITTED");
   const formData = new FormData(); // création formData
   files = [...files];
   files.forEach(file => formData.append("files", file)); // ajout des fichiers au formData
-  console.log(formData);
   // appel de l'URL upload_files
   fetch("./upload_files", {
     method:'POST',
@@ -93,17 +92,17 @@ function handleFiles(files) {
     .then(json =>
     {
       loadFiles(json.files);
-    })        // retour côté client si tout se passe bien
+      main();
+    })       // retour côté client si tout se passe bien
     .catch((err) => ("Submit Error", err)); // retour d'erreur
 }
 
 function loadFiles(urls)
 {
   const container = document.getElementById('container');
-  console.log(container);
   // récupére puis traite les url en fonction des types de fichiers
   urls.forEach(url =>
-  {
+  { 
     let element = document.createElement('div');
     switch(url.split('.').at(-1))
     {
@@ -111,13 +110,10 @@ function loadFiles(urls)
         let img = document.getElementById('img');
         img.src = url;
         const glr = document.getElementById('gallery');
-
-        //retire ancien canvas
+          //retire ancien canvas
         if (glr.firstElementChild) glr.removeChild(glr.firstElementChild);
         document.getElementById('gallery').appendChild(img);
         document.body.removeChild(document.getElementById ("canvas"));
-        //nouveau canvas
-        main();
         break;
       // sinon création liens fichiers xml et dat
       case 'xml':
@@ -138,10 +134,17 @@ function loadFiles(urls)
           })
           .then(json =>
           {
-            let texte = json.texte;
-            let xmlText = document.createElement('p');
-            xmlText.innerHTML = texte;
-            element.appendChild(xmlText);
+            let xmlTexte = json.texte;
+            let text = document.createElement('code');
+            text.setAttribute("id","xmlText");
+            text.innerHTML = xmlTexte;
+            element.appendChild(text);
+
+            let parser = new DOMParser();
+            let xmlDoc = parser.parseFromString(xmlTexte,"text/xml");
+            document.getElementById("Xsize").innerHTML = xmlDoc.getElementsByTagName("Xsize")[0].childNodes[0].nodeValue;
+            document.getElementById("Ysize").innerHTML = xmlDoc.getElementsByTagName("Ysize")[0].childNodes[0].nodeValue;
+
           })        // retour côté client si tout se passe bien
           .catch((err) => ("Submit Error", err)); // retour d'erreur
         let anchorter2 = document.createElement('a');

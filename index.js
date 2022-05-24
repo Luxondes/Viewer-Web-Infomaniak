@@ -17,26 +17,13 @@ app.post("/upload_xml", readXml);
 
 function readXml(req, res)
 {
-  console.log(req.body.urls);
   try {
-        let data = fs.readFileSync('./public/' + req.body.urls, 'utf8');
-        res.json({success:true, texte:data});
-      } catch (err) {
-          console.error(err);
-        }
+    let data = fs.readFileSync('./public/' + req.body.urls, 'utf8');
+    res.json({success:true, texte:data});
+  } catch (err) {
+    console.error(err);
+  }
 }
-// app.post("/upload_xml", (req, res) => {
-  
-  //   console.log(req.urls);
-//   try {
-//     // let data = fs.readFileSync(req.xmlurl, 'utf8');
-//     // res.json({success:true, texte:data});
-//     // console.log(data);
-//   } catch (err) {
-  //     console.error(err);
-  //   }
-  
-  // });
 
 // On traite les requetes POST vers l'URL upload_files,
 app.post("/upload_files",

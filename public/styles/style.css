@@ -44,11 +44,6 @@ canvas{
   top: 0px;
   z-index: -1;
 }
-#menu{
-  float: left;
-  margin-left: 5px;
-  margin-top: 5px;
-}
 .hidden{
   display: none;
 }
@@ -58,4 +53,8 @@ canvas{
   float: left;
   width: 20%;
   padding: 1%;
+}
+#container{
+  max-height : 500px;
+  overflow-y: scroll;
 }

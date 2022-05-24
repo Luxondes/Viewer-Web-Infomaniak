@@ -23,9 +23,12 @@ export function main(){
   controls.maxPolarAngle = Math.PI/2-0.01;
   
   // gestion de l'image sur le plan
-  const image = document.getElementById ("img");
+  const image = document.getElementById("img");
   let imageSrc = image.src;
-  
+  const xsize = document.getElementById("Xsize");
+  let xsizehtml = xsize.innerHTML;
+  console.log(imageSrc, xsizehtml);
+
   // ajout des meshs
   let geometry = new THREE.PlaneGeometry( 1, 1 );
   let texture = new THREE.TextureLoader().load( imageSrc );
