@@ -58,3 +58,6 @@ canvas{
   max-height : 500px;
   overflow-y: scroll;
 }
+#data{
+  display: none;
+}

@@ -25,12 +25,17 @@ export function main(){
   // gestion de l'image sur le plan
   const image = document.getElementById("img");
   let imageSrc = image.src;
+
   const xsize = document.getElementById("Xsize");
-  let xsizehtml = xsize.innerHTML;
-  console.log(imageSrc, xsizehtml);
+  let xsizehtml = 1;
+  if (xsize.innerHTML != 0){xsizehtml = xsize.innerHTML;}
+
+  const ysize = document.getElementById("Ysize");
+  let ysizehtml = 1;
+  if (ysize.innerHTML != 0){ysizehtml = ysize.innerHTML;}
 
   // ajout des meshs
-  let geometry = new THREE.PlaneGeometry( 1, 1 );
+  let geometry = new THREE.PlaneGeometry( 1, ysizehtml/xsizehtml );
   let texture = new THREE.TextureLoader().load( imageSrc );
   let material = new THREE.MeshBasicMaterial( { map: texture , side: THREE.DoubleSide} );
   let plane = new THREE.Mesh( geometry, material );

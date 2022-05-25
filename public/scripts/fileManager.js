@@ -144,7 +144,7 @@ function loadFiles(urls)
             let xmlDoc = parser.parseFromString(xmlTexte,"text/xml");
             document.getElementById("Xsize").innerHTML = xmlDoc.getElementsByTagName("Xsize")[0].childNodes[0].nodeValue;
             document.getElementById("Ysize").innerHTML = xmlDoc.getElementsByTagName("Ysize")[0].childNodes[0].nodeValue;
-
+            main();
           })        // retour côté client si tout se passe bien
           .catch((err) => ("Submit Error", err)); // retour d'erreur
         let anchorter2 = document.createElement('a');
