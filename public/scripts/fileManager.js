@@ -19,7 +19,6 @@ let hiddenDrop = false;
 ;['dragleave', 'drop'].forEach(eventName => {
   dropArea.addEventListener(eventName, hidden);
 })
-
 document.body.addEventListener('dragenter', unhidden);
 dropArea.addEventListener('dragenter', unhidden);
 
@@ -75,25 +74,24 @@ function handleDrop(e) {
   handleFiles(files);
 }
 
-
+// Gestion des fichiers ensuite
 function handleFiles(files) {
   const formData = new FormData(); // création formData
   files = [...files];
   files.forEach(file => formData.append("files", file)); // ajout des fichiers au formData
-  // appel de l'URL upload_files
+  // envoi du formData coté serveur pour décompression des fichiers
   fetch("./upload_files", {
     method:'POST',
     body: formData
   })
     .then((res) =>
     {
-      return res.json();
+      return res.json(); // réponse format json
     })
     .then(json =>
     {
-      loadFiles(json.files);
-      main();
-    })       // retour côté client si tout se passe bien
+      loadFiles(json.files); // chargement fichiers
+    })
     .catch((err) => ("Submit Error", err)); // retour d'erreur
 }
 
@@ -106,20 +104,21 @@ function loadFiles(urls)
     let element = document.createElement('div');
     switch(url.split('.').at(-1))
     {
+
       case 'jpg': // si image, modifie l'image du menu et du plan
         let img = document.getElementById('img');
         img.src = url;
-        const glr = document.getElementById('gallery');
-          //retire ancien canvas
-        if (glr.firstElementChild) glr.removeChild(glr.firstElementChild);
-        document.getElementById('gallery').appendChild(img);
+        // supprime ancien canvas puis reaffiche nouveau dans un second temps pour affecter image
         document.body.removeChild(document.getElementById ("canvas"));
+        main();
         break;
+
       // sinon création liens fichiers xml et dat
       case 'xml':
         let data = JSON.stringify({
           "urls": url
          });
+         // envoie de l'url de l'xml pour lecture du fichier coté serveur
         fetch("./upload_xml", {
           method:'POST',
           body: data,
@@ -130,7 +129,7 @@ function loadFiles(urls)
         })
           .then((res) =>
           {
-            return res.json();
+            return res.json(); // réponse format json
           })
           .then(json =>
           {
@@ -139,14 +138,22 @@ function loadFiles(urls)
             text.setAttribute("id","xmlText");
             text.innerHTML = xmlTexte;
             element.appendChild(text);
-
+            
+            // Parse puis recupere valeurs balises utiles
             let parser = new DOMParser();
             let xmlDoc = parser.parseFromString(xmlTexte,"text/xml");
-            document.getElementById("Xsize").innerHTML = xmlDoc.getElementsByTagName("Xsize")[0].childNodes[0].nodeValue;
-            document.getElementById("Ysize").innerHTML = xmlDoc.getElementsByTagName("Ysize")[0].childNodes[0].nodeValue;
-            main();
-          })        // retour côté client si tout se passe bien
+            if (xmlDoc.getElementsByTagName("Path")[0].childNodes[0].nodeValue){
+              // balises de taille de l'image
+              document.getElementById("Xsize").innerHTML = xmlDoc.getElementsByTagName("Xsize")[0].childNodes[0].nodeValue;
+              document.getElementById("Ysize").innerHTML = xmlDoc.getElementsByTagName("Ysize")[0].childNodes[0].nodeValue;
+              // supprime ancien canvas puis reaffiche nouveau dans un premier temps pour affecter taille
+              document.body.removeChild(document.getElementById ("canvas"));
+              main();
+            }
+          })
           .catch((err) => ("Submit Error", err)); // retour d'erreur
+
+        //affiche lien du xml dans le menu
         let anchorter2 = document.createElement('a');
         anchorter2.href = url;
         anchorter2.innerHTML = url;
@@ -154,6 +161,7 @@ function loadFiles(urls)
         break;
         
       case 'dat':
+        //affiche lien du dat dans le menu
         let anchorter = document.createElement('a');
         anchorter.href = url;
         anchorter.innerHTML = url;
@@ -168,11 +176,11 @@ function loadFiles(urls)
 }
 
 function deleteSignal(){
-  fetch("./delete_signal", { // envoi du signal pour supprimer
+  fetch("./delete_signal", { // envoi du signal coté serveur pour supprimer fichiers uploadés
     method:'POST',
     body: "delete_signal"
   })
     .catch((err) => ("Submit Error", err)); // retour d'erreur
 }
 
-window.onbeforeunload = deleteSignal;
+window.onbeforeunload = deleteSignal; // delete avant chaque fermeture page (ou F5)
