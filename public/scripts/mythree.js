@@ -5,7 +5,7 @@ export function main(){
 
   //création scène
   const scene = new THREE.Scene();
-  //scene.background = new THREE.Color( 0xf1f1f1 );
+  scene.background = new THREE.Color( 0xfcfcfc );
   
   // création caméra
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
@@ -40,6 +40,21 @@ export function main(){
   let material = new THREE.MeshBasicMaterial( { map: texture , side: THREE.DoubleSide} );
   let plane = new THREE.Mesh( geometry, material );
   scene.add( plane );
+
+  for (let i=-4; i<5; i++) {
+    for (let j=-4 ; j<5; j++) {
+
+      let geometry2 = new THREE.BoxGeometry( 0.01, 0.01, 0.01 );
+      let material2 = new THREE.MeshBasicMaterial( {color: "rgb("+ (i+4)*30 +", "+ (j+4)*30 +", "+ (0+4)*30 +")"} );
+      let cube = new THREE.Mesh( geometry2, material2 );
+      cube.position.x = i* 0.1;
+      cube.position.y = j* 0.1;
+      cube.position.z = 0.15;
+      scene.add( cube );
+
+    }    
+  }
+
   
   // fonction du rendu en boucle
   const loop = function() {

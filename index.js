@@ -13,9 +13,10 @@ app.use(express.urlencoded({ extended: true }));
 // projet frontend à lancer
 app.use(express.static('public'));
 
-app.post("/upload_xml", readXml);
+app.post("/upload_xml", readFile);
+app.post("/upload_dat", readFile);
 
-function readXml(req, res)
+function readFile(req, res)
 {
   try {
     let data = fs.readFileSync('./public/' + req.body.urls, 'utf8');

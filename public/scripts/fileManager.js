@@ -43,7 +43,7 @@ function hidden(){
 function hiddenS(){
   if (hiddenSelector){
     sousPannel.classList.remove('hidden');
-    pannel.style.border = "1px solid #ccc";
+    pannel.style.border = "1px solid black";
     pannel.style.width = "20%";
     hiddenSelector = false;
   }else{
@@ -72,6 +72,17 @@ function handleDrop(e) {
   let files = dt.files;
 
   handleFiles(files);
+}
+
+function htmlspecialchars(s){
+	return (typeof s=='string')?s.replace(/\</g,'&lt;')
+								 .replace(/\>/g,'&gt;')
+								 .replace(/&lt;/g,'<span>&lt;')
+								 .replace(/&gt;/g,'&gt;</span>')
+								.replace(/(\n)/gm,'<br>')
+                //  .replace(/&lt;/gm,'<br>&lt;')
+                //  .replace(/&gt;/gm,'&gt;<br>')
+								 :'';
 }
 
 // Gestion des fichiers ensuite
@@ -134,10 +145,6 @@ function loadFiles(urls)
           .then(json =>
           {
             let xmlTexte = json.texte;
-            let text = document.createElement('code');
-            text.setAttribute("id","xmlText");
-            text.innerHTML = xmlTexte;
-            element.appendChild(text);
             
             // Parse puis recupere valeurs balises utiles
             let parser = new DOMParser();
@@ -150,22 +157,49 @@ function loadFiles(urls)
               document.body.removeChild(document.getElementById ("canvas"));
               main();
             }
+
+            let text = document.createElement('code');
+            text.setAttribute("id","xmlText");
+            text.innerHTML =  htmlspecialchars(xmlTexte);
+            element.appendChild(text);
           })
           .catch((err) => ("Submit Error", err)); // retour d'erreur
 
         //affiche lien du xml dans le menu
-        let anchorter2 = document.createElement('a');
-        anchorter2.href = url;
-        anchorter2.innerHTML = url;
-        element.appendChild(anchorter2);
+        // let anchorter2 = document.createElement('a');
+        // anchorter2.href = url;
+        // anchorter2.innerHTML = url;
+        // element.appendChild(anchorter2);
         break;
         
       case 'dat':
+        let datad = JSON.stringify({
+          "urls": url
+        });
+        fetch("./upload_dat", {
+          method:'POST',
+          body: datad,
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        })
+          .then((res) =>
+          {
+            return res.json(); // réponse format json
+          })
+          .then(json =>
+          {
+            let datTexte = json.texte;
+            console.log(datTexte);
+          })
+          .catch((err) => ("Submit Error", err)); // retour d'erreur
+
         //affiche lien du dat dans le menu
-        let anchorter = document.createElement('a');
-        anchorter.href = url;
-        anchorter.innerHTML = url;
-        element.appendChild(anchorter);
+        // let anchorter = document.createElement('a');
+        // anchorter.href = url;
+        // anchorter.innerHTML = url;
+        // element.appendChild(anchorter);
         break;
 
       default:

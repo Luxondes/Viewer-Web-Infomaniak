@@ -48,7 +48,9 @@ canvas{
   display: none;
 }
 #pannel{
-  border: 1px solid #ccc;
+  color: black;
+  /* border: 1px solid #ccc; */
+  border: 1px solid black;
   border-radius: 15px;
   float: left;
   width: 20%;
@@ -60,4 +62,13 @@ canvas{
 }
 #data{
   display: none;
+}
+span{
+  color: purple;
+}
+
+hr{
+  height: 1px;
+  background-color: black;
+  border: none;
 }
