@@ -48,9 +48,8 @@ canvas{
   display: none;
 }
 #pannel{
-  color: black;
   /* border: 1px solid #ccc; */
-  border: 1px solid black;
+  border: 1px solid #ccc;
   border-radius: 15px;
   float: left;
   width: 20%;
@@ -67,8 +66,3 @@ span{
   color: purple;
 }
 
-hr{
-  height: 1px;
-  background-color: black;
-  border: none;
-}

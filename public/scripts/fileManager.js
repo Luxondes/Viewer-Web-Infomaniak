@@ -43,7 +43,7 @@ function hidden(){
 function hiddenS(){
   if (hiddenSelector){
     sousPannel.classList.remove('hidden');
-    pannel.style.border = "1px solid black";
+    pannel.style.border = "1px solid #ccc";
     pannel.style.width = "20%";
     hiddenSelector = false;
   }else{
