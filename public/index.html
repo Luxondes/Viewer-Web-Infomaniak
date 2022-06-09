@@ -8,38 +8,9 @@
 	</head>
 
 	<body>
-		
-		<div id="pannel" >
 
-			<label class="button" id="selector">File Selector</label>
-
-			<div id="souspannel">
-				<form>
-					<p>Upload an image with the file dialog or by dragging and dropping image onto the screen</p>
-					<input type="file" id="fileElem" multiple accept="*">
-					<label class="button" for="fileElem">Select a file</label>
-				</form>
-
-				<div id="gallery"/>
-					<img src='img/nuitEtoile.jpg' id="img" class=" drop">
-				</div>
-
-				<hr>
-	
-				<div id="container">
-				</div>
-				
-			</div>
-
-
-		</div>
-
-		<div id="data">
-			<p id="Xsize">1</p>
-			<p id="Ysize">1</p>
-		</div>
-		
-		<div id="drop-area" class="hidden"></div>
+		<canvas id="heightmap" width="256" height="256" style="position:absolute;"></canvas>
+		<canvas id="heightgrd" width="64" height="256" style="position:absolute;left:257px;"></canvas>
 
 		<script src="lib/stats.min.js"></script>
 		<script type="importmap">
@@ -47,8 +18,7 @@
 				"imports": { "three": "./lib/three-module.js" }
 			}
 		</script>
-		<script type="module" src="scripts/fileManager.js"></script>
-        <script type="module" src="scripts/mythree.js"></script>
+		<script type="module" src="scripts/heightMap.js"></script>
 
 	</body>
 	
