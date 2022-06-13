@@ -6,7 +6,7 @@ import { OrbitControls } from '../lib/OrbitControls.js';
 
 
 
-var heatVertex = `
+let heatVertex = `
     uniform sampler2D heightMap;
     uniform float heightRatio;
     uniform float heightBias;
@@ -25,7 +25,7 @@ var heatVertex = `
       gl_Position = projectionMatrix * mvPosition;
     }
   `;
-  var heatFragment = `
+  let heatFragment = `
     uniform sampler2D gradientMap;
     varying float hValue;
 
@@ -36,12 +36,12 @@ var heatVertex = `
     }
   `;
   
-  var canvasH = document.getElementById("heightmap");
+  let canvasH = document.getElementById("heightmap");
   canvasH.addEventListener("click", () => {
     createHeightMap();
   }, false);
-  var heightMap = new THREE.CanvasTexture(canvasH);
-  var ctx = canvasH.getContext("2d");
+  let heightMap = new THREE.CanvasTexture(canvasH);
+  let ctx = canvasH.getContext("2d");
   
   //console.log(heightMap);
   createHeightMap();
@@ -49,11 +49,11 @@ var heatVertex = `
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, 256, 256);
     for (let i = 0; i < 100; i++) {
-      var x = Math.floor(Math.random() * 255);
-      var y = Math.floor(Math.random() * 255);
-      var radius = 50;
+      let x = Math.floor(Math.random() * 255);
+      let y = Math.floor(Math.random() * 255);
+      let radius = 50;
       let grd = ctx.createRadialGradient(x, y, 1, x, y, radius);
-      var h8 = Math.floor(Math.random() * 255);
+      let h8 = Math.floor(Math.random() * 255);
       grd.addColorStop(0, "rgb(" + h8 + "," + h8 + "," + h8 + ")");
       grd.addColorStop(1, "transparent");
       ctx.fillStyle = grd;
@@ -61,30 +61,44 @@ var heatVertex = `
     }
     heightMap.needsUpdate = true;
   }
+
+
+
   
-  var canvasG = document.getElementById("heightgrd");
-  canvasG.addEventListener("click", ()=>{
+  let canvasG = document.getElementById("heightgrd");
+  let gradientMap = new THREE.CanvasTexture(canvasG);
+  let ctxG = canvasG.getContext("2d");
+
+  let mires = []; 
+  for (let i = 1; i < 8; i++) {
+    let img = new Image();
+    img.src = "../img/mir_0" + i + ".jpg";
+    mires.push(img)
+  }
+  let mires_index;
+
+  window.addEventListener("load", ()=>{
     createGradMap();
   }, false);
-  var gradientMap = new THREE.CanvasTexture(canvasG);
-  var ctxG = canvasG.getContext("2d");
   
   createGradMap();
   function createGradMap() {
-    console.log("grad");
-    let grd = ctxG.createLinearGradient(0,255, 0, 0);
-    var colorAmount = 3 + THREE.MathUtils.randInt(0, 3);
-    var colorStep = 1. / colorAmount; 
-    for (let i = 0; i <= colorAmount; i++){
-      let r = THREE.MathUtils.randInt(0,255);
-      let g = THREE.MathUtils.randInt(0,255);
-      let b = THREE.MathUtils.randInt(0,255);
-      grd.addColorStop(colorStep * i,'rgb(' + r + ',' + g + ',' + b +')');
-    }
-    ctxG.fillStyle = grd;
-    ctxG.fillRect(0, 0, 64, 256)
+    mires_index = 0;
+    ctxG.drawImage(mires[mires_index], 0, 0, 64, 256);
     gradientMap.needsUpdate = true;
   }
+  
+  canvasG.addEventListener("click", ()=>{
+    updateGradMap();
+  }, false);
+  
+  function updateGradMap() {
+    mires_index = (mires_index + 1) % 7;
+    ctxG.drawImage(mires[mires_index], 0, 0, 64, 256);
+    gradientMap.needsUpdate = true;
+  }
+
+
 
 
 
@@ -119,10 +133,10 @@ plane.rotation.x = -Math.PI / 2;
 plane.position.y = 1;
 scene.add( plane );
 
-var planeGeometry = new THREE.PlaneBufferGeometry(50, 50, 500, 500);
+let planeGeometry = new THREE.PlaneBufferGeometry(50, 50, 500, 500);
 planeGeometry.rotateX(-Math.PI * 0.5);
 
-var heat = new THREE.Points(planeGeometry, new THREE.ShaderMaterial({
+let heat = new THREE.Points(planeGeometry, new THREE.ShaderMaterial({
   uniforms: {
     heightMap: {value: heightMap},
     heightRatio: {value: 10},
