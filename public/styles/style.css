@@ -2,3 +2,63 @@ body{
   overflow: hidden;
   margin: 0;
 }
+div.dg{
+  position:absolute;
+  right:-15px;
+  top: 300px;
+}
+#pannel{
+  position: absolute;
+  border: 1px solid #ccc;
+  color: #ccc;
+  border-radius: 15px;
+  float: left;
+  width: 20%;
+  padding: 1%;
+}
+.button{
+  display: inline-block;
+  padding: 10px;
+  background: #ccc;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  color: rgb(0, 0, 0);
+  user-select: none;
+}
+.button:hover{
+  background: #ddd;
+}
+#fileElem{
+  display: none;
+}
+.hidden{
+  display: none;
+}
+#container{
+  max-height : 500px;
+  overflow-y: scroll;
+}
+#data{
+  display: none;
+}
+#gallery{
+  margin-top: 16px;
+}
+img{
+  width: 50%;
+}
+#drop-area{
+  position: relative;
+  border: 2px dashed #ccc;
+  border-radius: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+code span{
+  color: purple;
+}
+

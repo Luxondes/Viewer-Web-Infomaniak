@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from '../lib/OrbitControls.js';
+// import * as HMC from './heightMapCanvas.js';
 
-
-
-
-
-
-let heatVertex = `
+export function main(){
+  
+  let heatVertex = `
     uniform sampler2D heightMap;
     uniform float heightRatio;
     uniform float heightBias;
@@ -51,8 +49,6 @@ let heatVertex = `
     [200, 0, 178], [200, 50, 11], [200, 100, 247], [200, 150, 89], [200, 200, 160]
   ]
 
-
-
   createHeightMap();
   function createHeightMap() {
     ctx.fillStyle = "black";
@@ -79,11 +75,6 @@ let heatVertex = `
     heightMap.needsUpdate = true;
   }
 
-  console.log(dataM);
-
-
-
-  
   let canvasG = document.getElementById("heightgrd");
   let gradientMap = new THREE.CanvasTexture(canvasG);
   let ctxG = canvasG.getContext("2d");
@@ -113,103 +104,106 @@ let heatVertex = `
   
   function updateGradMap() {
     mires_index = (mires_index + 1) % 7;
+    ctxG.clearRect(0, 0, 64, 256);
     ctxG.drawImage(mires[mires_index], 0, 0, 64, 256);
+    ctx.fillStyle = "rgba(255,255,255,0)";
+    ctx.fillRect(0, 0, 200, 256);
     gradientMap.needsUpdate = true;
   }
 
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+  camera.position.set(0, 40, 60);
+  const renderer = new THREE.WebGLRenderer({antialias: true});
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.domElement.id = "canvas";
+  document.body.appendChild(renderer.domElement);
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.maxPolarAngle = Math.PI/2-0.01;
+
+  const gC = 0x660066;
+  scene.add(new THREE.GridHelper(50, 25, gC, gC));
+
+  const image = document.getElementById("img");
+  let imageSrc = image.src;
+
+  const xsize = document.getElementById("Xsize");
+  let xsizehtml = 1;
+  if (xsize.innerHTML != 0){xsizehtml = xsize.innerHTML;}
+
+  const ysize = document.getElementById("Ysize");
+  let ysizehtml = 1;
+  if (ysize.innerHTML != 0){ysizehtml = ysize.innerHTML;}
+  
+  let geometry = new THREE.PlaneGeometry( 50, ysizehtml/xsizehtml*50 );
+  let texture = new THREE.TextureLoader().load( imageSrc );
+  let material = new THREE.MeshBasicMaterial( { map: texture , side: THREE.DoubleSide} );
+  let plane = new THREE.Mesh( geometry, material );
+  plane.rotation.x = -Math.PI / 2;
+  plane.position.y = 1;
+  scene.add( plane );
+
+  const data = {
+    width: 50,
+    height: 50,
+    widthSegments: 500,
+    heightSegments: 500,
+  };
+
+  let planeGeometry = new THREE.PlaneBufferGeometry(data.width, data.height, data.widthSegments, data.heightSegments);
+  planeGeometry.rotateX(-Math.PI * 0.5);
+
+  let heat = new THREE.Points(planeGeometry, new THREE.ShaderMaterial({
+    uniforms: {
+      heightMap: {value: heightMap},
+      heightRatio: {value: 10},
+      heightBias: {value: 7},
+      gradientMap: {value: gradientMap}
+    },
+    vertexShader: heatVertex,
+    fragmentShader: heatFragment,
+  }));
+
+  scene.add(heat);
+
+    var gui = new dat.GUI();
+    gui.add(heat.material.uniforms.heightRatio, "value", 0, 25).name("heightRatio");
+    gui.add(heat.material.uniforms.heightBias, "value", 1, 10).name("heightBias");
+
+  window.addEventListener( 'resize', onWindowResize, false );
 
 
+  const stats = new Stats();
+  stats.showPanel( 0 );
+  stats.domElement.style.cssText = 'position:absolute;bottom:0px;right:160px;';
+  document.body.appendChild( stats.dom );
+
+  const stats2 = new Stats();
+  stats2.showPanel( 1 );
+  stats2.domElement.style.cssText = 'position:absolute;bottom:0px;right:80px;';
+  document.body.appendChild( stats2.dom );
+
+  const stats3 = new Stats();
+  stats3.showPanel( 2 );
+  stats3.domElement.style.cssText = 'position:absolute;bottom:0px;right:0px;';
+  document.body.appendChild( stats3.dom );
 
 
+  render();
+  function render(){
+    requestAnimationFrame(render);
+    renderer.render(scene, camera);
+    stats.update()
+    stats2.update()
+    stats3.update()
+  }
 
+  function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize( window.innerWidth, window.innerHeight );
 
-
-
-
-
-
-
-
-
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-camera.position.set(0, 20, 40);
-const renderer = new THREE.WebGLRenderer({antialias: true});
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.maxPolarAngle = Math.PI/2-0.01;
-
-const gC = 0x660066;
-scene.add(new THREE.GridHelper(50, 25, gC, gC));
-
-let geometry = new THREE.PlaneGeometry( 50, 50 );
-let texture = new THREE.TextureLoader().load( '../img/nuitEtoile.jpg' );
-let material = new THREE.MeshBasicMaterial( { map: texture , side: THREE.DoubleSide} );
-let plane = new THREE.Mesh( geometry, material );
-plane.rotation.x = -Math.PI / 2;
-plane.position.y = 1;
-scene.add( plane );
-
-const data = {
-  width: 50,
-  height: 50,
-  widthSegments: 500,
-  heightSegments: 500,
-};
-
-let planeGeometry = new THREE.PlaneBufferGeometry(data.width, data.height, data.widthSegments, data.heightSegments);
-planeGeometry.rotateX(-Math.PI * 0.5);
-
-let heat = new THREE.Points(planeGeometry, new THREE.ShaderMaterial({
-  uniforms: {
-    heightMap: {value: heightMap},
-    heightRatio: {value: 10},
-    heightBias: {value: 7},
-    gradientMap: {value: gradientMap}
-  },
-  vertexShader: heatVertex,
-  fragmentShader: heatFragment
-}));
-
-scene.add(heat);
-
-  var gui = new dat.GUI();
-  gui.add(heat.material.uniforms.heightRatio, "value", 0, 25).name("heightRatio");
-  gui.add(heat.material.uniforms.heightBias, "value", 1, 10).name("heightBias");
-
-window.addEventListener( 'resize', onWindowResize, false );
-
-
-const stats = new Stats();
-stats.showPanel( 0 );
-stats.domElement.style.cssText = 'position:absolute;top:0px;right:0px;';
-document.body.appendChild( stats.dom );
-
-const stats2 = new Stats();
-stats2.showPanel( 1 );
-stats2.domElement.style.cssText = 'position:absolute;top:48px;right:0px;';
-document.body.appendChild( stats2.dom );
-
-const stats3 = new Stats();
-stats3.showPanel( 2 );
-stats3.domElement.style.cssText = 'position:absolute;top:96px;right:0px;';
-document.body.appendChild( stats3.dom );
-
-
-render();
-function render(){
-  requestAnimationFrame(render);
-  renderer.render(scene, camera);
-  stats.update()
-  stats2.update()
-  stats3.update()
+  }
 }
-
-function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize( window.innerWidth, window.innerHeight );
-
-}
+main();
