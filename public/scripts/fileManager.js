@@ -118,10 +118,6 @@ function handleFiles(files) {
         case 'jpg': // si image, modifie l'image du menu et du plan
             let img = document.getElementById('img');
             img.src = url;
-            console.log(url);
-            // supprime ancien canvas puis reaffiche nouveau dans un second temps pour affecter image
-            document.body.removeChild(document.getElementById ("canvas"));
-            main();
             break;
 
         case 'xml':
@@ -151,11 +147,9 @@ function handleFiles(files) {
                     // balises de taille de l'image
                     document.getElementById("Xsize").innerHTML = xmlDoc.getElementsByTagName("Xsize")[0].childNodes[0].nodeValue;
                     document.getElementById("Ysize").innerHTML = xmlDoc.getElementsByTagName("Ysize")[0].childNodes[0].nodeValue;
-                    // supprime ancien canvas puis reaffiche nouveau dans un premier temps pour affecter taille
-                    document.body.removeChild(document.getElementById ("canvas"));
-                    main();
                 }
-        
+                document.body.removeChild(document.getElementById ("canvas"));
+                main();
                 let text = document.createElement('code');
                 text.setAttribute("id","xmlText");
                 text.innerHTML =  htmlspecialchars(xmlTexte);

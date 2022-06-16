@@ -129,12 +129,10 @@ export function main(){
   let imageSrc = image.src;
 
   const xsize = document.getElementById("Xsize");
-  let xsizehtml = 1;
-  if (xsize.innerHTML != 0){xsizehtml = xsize.innerHTML;}
+  let xsizehtml = xsize.innerHTML;
 
   const ysize = document.getElementById("Ysize");
-  let ysizehtml = 1;
-  if (ysize.innerHTML != 0){ysizehtml = ysize.innerHTML;}
+  let ysizehtml = ysize.innerHTML;
   
   let geometry = new THREE.PlaneGeometry( 50, ysizehtml/xsizehtml*50 );
   let texture = new THREE.TextureLoader().load( imageSrc );
