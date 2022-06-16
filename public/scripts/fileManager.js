@@ -107,11 +107,11 @@ function handleFiles(files) {
   
   function loadFiles(urls)
   {
+
     const container = document.getElementById('container');
     // récupére puis traite les url en fonction des types de fichiers
     urls.forEach(url =>
     { 
-      let element = document.createElement('div');
       switch(url.split('.').at(-1))
       {
   
@@ -150,10 +150,17 @@ function handleFiles(files) {
                 }
                 document.body.removeChild(document.getElementById ("canvas"));
                 main();
+
+                while (document.getElementById("container").firstElementChild){
+                  document.getElementById("container").removeChild(list.firstElementChild);                  
+                }
+
+                let element = document.createElement('div');
                 let text = document.createElement('code');
                 text.setAttribute("id","xmlText");
                 text.innerHTML =  htmlspecialchars(xmlTexte);
                 element.appendChild(text);
+                container.appendChild(element);
             })
             .catch((err) => ("Submit Error", err)); // retour d'erreur
                 break;
@@ -184,11 +191,11 @@ function handleFiles(files) {
         default:
           break;
       }
-      container.appendChild(element);
     });
   }
   
-  function deleteSignal(){
+  async function deleteSignal(){
+    console.log('del');
     fetch("./delete_signal", { // envoi du signal coté serveur pour supprimer fichiers uploadés
       method:'POST',
       body: "delete_signal"
