@@ -28,9 +28,8 @@ export function main(){
     varying float hValue;
 
     void main() {
-      float v = clamp(hValue, 0., 1.);
-      vec3 col = texture2D(gradientMap, vec2(0, v)).rgb;
-      gl_FragColor = vec4(col, 1.) ;
+      vec4 col = texture2D(gradientMap, vec2(0, hValue)).rgba;
+      gl_FragColor = vec4(col) ;
     }
   `;
   
@@ -42,12 +41,21 @@ export function main(){
   let ctx = canvasH.getContext("2d");
   
   let dataM = [
-    [0, 0, 240], [0, 50, 120], [0, 100, 148], [0, 150, 8], [0, 200, 74],
+    [0, 0, 200], [0, 50, 120], [0, 100, 148], [0, 150, 8], [0, 200, 74],
     [50, 0, 9], [50, 50, 145], [50, 100, 124], [50, 150, 74], [50, 200, 95],
-    [100, 0, 56], [100, 50, 115], [100, 100, 74], [100, 150, 234], [100, 200, 7],
-    [150, 0, 86], [150, 50, 227], [150, 100, 146], [150, 150, 92], [150, 200, 143],
-    [200, 0, 178], [200, 50, 11], [200, 100, 247], [200, 150, 89], [200, 200, 160]
+    [100, 0, 56], [100, 50, 115], [100, 100, 74], [100, 150, 134], [100, 200, 7],
+    [150, 0, 86], [150, 50, 200], [150, 100, 146], [150, 150, 92], [150, 200, 240],
+    [200, 0, 178], [200, 50, 11], [200, 100, 200], [200, 150, 240], [200, 200, 240]
   ]
+
+  let dataMmin = dataM[0][2];
+  let dataMmax = dataM[0][2];
+  for (let index = 0; index < dataM.length; index++) {
+    if (dataM[index][2] < dataMmin){dataMmin = dataM[index][2]}
+    if (dataM[index][2] > dataMmax){dataMmax = dataM[index][2]}
+  }
+  console.log(dataMmin);
+  console.log(dataMmax);
 
   createHeightMap();
   function createHeightMap() {
@@ -67,6 +75,7 @@ export function main(){
     for (let index = 0; index < dataM.length; index++) {
       let grd = ctx.createRadialGradient(dataM[index][0]+25, dataM[index][1]+25, 1, dataM[index][0]+25, dataM[index][1]+25, 100);
       let grey = dataM[index][2]
+      grey = (grey-dataMmin)/(dataMmax-dataMmin) * 255
       grd.addColorStop(0, "rgb(" + grey + "," + grey + "," + grey + ")");
       grd.addColorStop(1, "transparent");
       ctx.fillStyle = grd;
@@ -161,6 +170,7 @@ export function main(){
     },
     vertexShader: heatVertex,
     fragmentShader: heatFragment,
+    transparent: true,
   }));
 
   scene.add(heat);
