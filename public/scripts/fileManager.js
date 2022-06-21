@@ -184,6 +184,7 @@ function handleFiles(files) {
                 .then(json =>
                 {
                   let datTexte = json.texte;
+                  document.getElementById("dat").innerHTML = datTexte;
                 })
                 .catch((err) => ("Submit Error", err)); // retour d'erreur
               break;

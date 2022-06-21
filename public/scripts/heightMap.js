@@ -54,8 +54,6 @@ export function main(){
     if (dataM[index][2] < dataMmin){dataMmin = dataM[index][2]}
     if (dataM[index][2] > dataMmax){dataMmax = dataM[index][2]}
   }
-  console.log(dataMmin);
-  console.log(dataMmax);
 
   createHeightMap();
   function createHeightMap() {
