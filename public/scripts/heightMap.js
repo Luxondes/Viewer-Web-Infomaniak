@@ -34,29 +34,55 @@ export function main(){
   `;
   
   let canvasH = document.getElementById("heightmap");
-  canvasH.addEventListener("click", () => {
-    createHeightMap();
-  }, false);
+  // canvasH.addEventListener("click", () => {
+  //   createHeightMap();
+  // }, false);
   let heightMap = new THREE.CanvasTexture(canvasH);
   let ctx = canvasH.getContext("2d");
   
-  let dataM = [
-    [0, 0, 200], [0, 50, 120], [0, 100, 148], [0, 150, 8], [0, 200, 74],
-    [50, 0, 9], [50, 50, 145], [50, 100, 124], [50, 150, 74], [50, 200, 95],
-    [100, 0, 56], [100, 50, 115], [100, 100, 74], [100, 150, 134], [100, 200, 7],
-    [150, 0, 86], [150, 50, 200], [150, 100, 146], [150, 150, 92], [150, 200, 240],
-    [200, 0, 178], [200, 50, 11], [200, 100, 200], [200, 150, 240], [200, 200, 240]
-  ]
+  // let dataM = [
+  //   [0, 0, 200], [0, 50, 120], [0, 100, 148], [0, 150, 8], [0, 200, 74],
+  //   [50, 0, 9], [50, 50, 145], [50, 100, 124], [50, 150, 74], [50, 200, 95],
+  //   [100, 0, 56], [100, 50, 115], [100, 100, 74], [100, 150, 134], [100, 200, 7],
+  //   [150, 0, 86], [150, 50, 200], [150, 100, 146], [150, 150, 92], [150, 200, 240],
+  //   [200, 0, 178], [200, 50, 11], [200, 100, 200], [200, 150, 240], [200, 200, 240]
+  // ]
 
-  let dataMmin = dataM[0][2];
-  let dataMmax = dataM[0][2];
-  for (let index = 0; index < dataM.length; index++) {
-    if (dataM[index][2] < dataMmin){dataMmin = dataM[index][2]}
-    if (dataM[index][2] > dataMmax){dataMmax = dataM[index][2]}
+  // let dataMmin = dataM[0][2];
+  // let dataMmax = dataM[0][2];
+  // for (let index = 0; index < dataM.length; index++) {
+  //   if (dataM[index][2] < dataMmin){dataMmin = dataM[index][2]}
+  //   if (dataM[index][2] > dataMmax){dataMmax = dataM[index][2]}
+  // }
+
+  const datstr = document.getElementById("dat");
+  let dathtml = datstr.innerHTML;
+
+    if (dathtml) {
+      let lines = dathtml.split('\n')
+
+      for (let i = 0; i < lines.length; i++) {
+        lines[i] = lines[i].split('\t');
+        for (let j = 0; j < lines[i].length; j++) {
+          lines[i][j] = parseFloat(lines[i][j]);
+        }
+      }
+
+      
+      let dataMmin = lines[0][3];
+      let dataMmax = lines[0][3];
+      for (let index = 0; index < lines.length; index++) {
+        if (lines[index][3] < dataMmin){dataMmin = lines[index][3]}
+        if (lines[index][3] > dataMmax){dataMmax = lines[index][3]}
+      }
+      let pas = lines[0][1] - lines[1][1];
+
+      console.log(pas);
+
+      createHeightMap(lines, dataMmin, dataMmax, pas);
   }
 
-  createHeightMap();
-  function createHeightMap() {
+  function createHeightMap(l, min, max, pas) {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, 256, 256);
     // for (let i = 0; i < 1; i++) {
@@ -70,15 +96,17 @@ export function main(){
     //   ctx.fillStyle = grd;
     //   ctx.fillRect(0, 0, 256, 256);
     // }
-    for (let index = 0; index < dataM.length; index++) {
-      let grd = ctx.createRadialGradient(dataM[index][0]+25, dataM[index][1]+25, 1, dataM[index][0]+25, dataM[index][1]+25, 100);
-      let grey = dataM[index][2]
-      grey = (grey-dataMmin)/(dataMmax-dataMmin) * 255
+    for (let index = 0; index < l.length-1; index++) {
+    
+      let grd = ctx.createRadialGradient(l[index][0]*pas+128, l[index][1]*pas+128, 1, l[index][0]*pas+128, l[index][1]*pas+128, 8);
+      let grey  = l[index][3];
+      grey = (grey-min)/(max-min) * 255
       grd.addColorStop(0, "rgb(" + grey + "," + grey + "," + grey + ")");
       grd.addColorStop(1, "transparent");
       ctx.fillStyle = grd;
       ctx.fillRect(0, 0, 256, 256);
     }
+  
     heightMap.needsUpdate = true;
   }
 
@@ -152,10 +180,11 @@ export function main(){
   const data = {
     width: 50,
     height: 50,
-    widthSegments: 500,
-    heightSegments: 500,
+    widthSegments: 750,
+    heightSegments: 750,
   };
 
+  
   let planeGeometry = new THREE.PlaneBufferGeometry(data.width, data.height, data.widthSegments, data.heightSegments);
   planeGeometry.rotateX(-Math.PI * 0.5);
 
@@ -170,9 +199,9 @@ export function main(){
     fragmentShader: heatFragment,
     transparent: true,
   }));
-
-  scene.add(heat);
-
+  if (dathtml) {
+  scene.add(heat);}
+  
     var gui = new dat.GUI();
     gui.add(heat.material.uniforms.heightRatio, "value", 0, 25).name("heightRatio");
     gui.add(heat.material.uniforms.heightBias, "value", 1, 10).name("heightBias");
