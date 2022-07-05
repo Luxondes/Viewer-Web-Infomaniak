@@ -149,7 +149,6 @@ function handleFiles(files) {
                     document.getElementById("Ysize").innerHTML = xmlDoc.getElementsByTagName("Ysize")[0].childNodes[0].nodeValue;
                 }
                 document.body.removeChild(document.getElementById ("canvas"));
-                main();
 
                 while (document.getElementById("container").firstElementChild){
                   document.getElementById("container").removeChild(list.firstElementChild);                  

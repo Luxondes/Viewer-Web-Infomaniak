@@ -68,45 +68,50 @@ export function main(){
         }
       }
 
-      
       let dataMmin = lines[0][3];
       let dataMmax = lines[0][3];
+      let dataXmax = lines[0][0];
+      let dataXmin = lines[0][0];
+      let dataYmax = lines[0][1];
+      let dataYmin = lines[0][1];
+
       for (let index = 0; index < lines.length; index++) {
         if (lines[index][3] < dataMmin){dataMmin = lines[index][3]}
         if (lines[index][3] > dataMmax){dataMmax = lines[index][3]}
+
+        if (lines[index][0] < dataXmin){dataXmin = lines[index][0]}
+        if (lines[index][0] > dataXmax){dataXmax = lines[index][0]}
+
+        if (lines[index][1] < dataYmin){dataYmin = lines[index][1]}
+        if (lines[index][1] > dataYmax){dataYmax = lines[index][1]}
       }
-      let pas = lines[0][1] - lines[1][1];
 
-      console.log(pas);
+      // console.log("mMax : " + dataMmax);
+      // console.log("mMin : " + dataMmin);
+      // console.log("xMin : " + dataXmax);
+      // console.log("xMin : " + dataXmin);
+      // console.log("yMax : " + dataYmax);
+      // console.log("yMin : " + dataYmin);
 
-      createHeightMap(lines, dataMmin, dataMmax, pas);
+      createHeightMap(lines, dataMmax, dataMmin, dataXmax, dataXmin, dataYmax, dataYmin);
   }
 
-  function createHeightMap(l, min, max, pas) {
+  function createHeightMap(l, mMax, mMin, xMax, xMin, yMax, yMin) {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, 256, 256);
-    // for (let i = 0; i < 1; i++) {
-    //   let x = Math.floor(Math.random() * 255);
-    //   let y = Math.floor(Math.random() * 255);
-    //   let radius = 50;
-    //   let grd = ctx.createRadialGradient(x, y, 1, x, y, radius);
-    //   let h8 = Math.floor(Math.random() * 255);
-    //   grd.addColorStop(0, "rgb(" + h8 + "," + h8 + "," + h8 + ")");
-    //   grd.addColorStop(1, "transparent");
-    //   ctx.fillStyle = grd;
-    //   ctx.fillRect(0, 0, 256, 256);
-    // }
     for (let index = 0; index < l.length-1; index++) {
     
-      let grd = ctx.createRadialGradient(l[index][0]*pas+128, l[index][1]*pas+128, 1, l[index][0]*pas+128, l[index][1]*pas+128, 8);
-      let grey  = l[index][3];
-      grey = (grey-min)/(max-min) * 255
+      let xCoord = (l[index][0]-xMin)/(xMax-xMin) * 256;
+      let yCoord = (l[index][1]-yMin)/(yMax-yMin) * 256;
+      let grd = ctx.createRadialGradient(xCoord, yCoord, 1, xCoord, yCoord, 10);
+      let grey = (l[index][3]-mMin)/(mMax-mMin) * 255;
+
       grd.addColorStop(0, "rgb(" + grey + "," + grey + "," + grey + ")");
       grd.addColorStop(1, "transparent");
       ctx.fillStyle = grd;
       ctx.fillRect(0, 0, 256, 256);
     }
-  
+
     heightMap.needsUpdate = true;
   }
 
@@ -199,8 +204,8 @@ export function main(){
     fragmentShader: heatFragment,
     transparent: true,
   }));
-  if (dathtml) {
-  scene.add(heat);}
+  
+  scene.add(heat);
   
     var gui = new dat.GUI();
     gui.add(heat.material.uniforms.heightRatio, "value", 0, 25).name("heightRatio");
