@@ -20,6 +20,7 @@
     "multer": "^1.4.4",
     "nodemon": "^2.0.16",
     "npm": "^8.7.0",
+    "simplex-noise": "^3.0.1",
     "stats.js": "^0.17.0",
     "three": "^0.139.2",
     "three-orbit-controls": "^82.1.0",

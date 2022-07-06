@@ -3,123 +3,12 @@ import { OrbitControls } from '../lib/OrbitControls.js';
 // import * as HMC from './heightMapCanvas.js';
 
 export function main(){
-  
-  let heatVertex = `
-    uniform sampler2D heightMap;
-    uniform float heightRatio;
-    uniform float heightBias;
-    varying vec2 vUv;
-    varying float hValue;
-    void main() {
-      vUv = uv;
-      vec3 pos = position;
-      hValue = texture2D(heightMap, vUv).r;
-      pos.y = hValue * heightRatio;
-      pos.y += heightBias;
-
-      vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-
-      gl_PointSize = 30. * (1. / - mvPosition.z);
-      gl_Position = projectionMatrix * mvPosition;
-    }
-  `;
-  let heatFragment = `
-    uniform sampler2D gradientMap;
-    varying float hValue;
-
-    void main() {
-      vec4 col = texture2D(gradientMap, vec2(0, hValue)).rgba;
-      gl_FragColor = vec4(col) ;
-    }
-  `;
-  
-  let canvasH = document.getElementById("heightmap");
-  // canvasH.addEventListener("click", () => {
-  //   createHeightMap();
-  // }, false);
-  let heightMap = new THREE.CanvasTexture(canvasH);
-  let ctx = canvasH.getContext("2d");
-  
-  // let dataM = [
-  //   [0, 0, 200], [0, 50, 120], [0, 100, 148], [0, 150, 8], [0, 200, 74],
-  //   [50, 0, 9], [50, 50, 145], [50, 100, 124], [50, 150, 74], [50, 200, 95],
-  //   [100, 0, 56], [100, 50, 115], [100, 100, 74], [100, 150, 134], [100, 200, 7],
-  //   [150, 0, 86], [150, 50, 200], [150, 100, 146], [150, 150, 92], [150, 200, 240],
-  //   [200, 0, 178], [200, 50, 11], [200, 100, 200], [200, 150, 240], [200, 200, 240]
-  // ]
-
-  // let dataMmin = dataM[0][2];
-  // let dataMmax = dataM[0][2];
-  // for (let index = 0; index < dataM.length; index++) {
-  //   if (dataM[index][2] < dataMmin){dataMmin = dataM[index][2]}
-  //   if (dataM[index][2] > dataMmax){dataMmax = dataM[index][2]}
-  // }
-
-  const datstr = document.getElementById("dat");
-  let dathtml = datstr.innerHTML;
-
-    if (dathtml) {
-      let lines = dathtml.split('\n')
-
-      for (let i = 0; i < lines.length; i++) {
-        lines[i] = lines[i].split('\t');
-        for (let j = 0; j < lines[i].length; j++) {
-          lines[i][j] = parseFloat(lines[i][j]);
-        }
-      }
-
-      let dataMmin = lines[0][3];
-      let dataMmax = lines[0][3];
-      let dataXmax = lines[0][0];
-      let dataXmin = lines[0][0];
-      let dataYmax = lines[0][1];
-      let dataYmin = lines[0][1];
-
-      for (let index = 0; index < lines.length; index++) {
-        if (lines[index][3] < dataMmin){dataMmin = lines[index][3]}
-        if (lines[index][3] > dataMmax){dataMmax = lines[index][3]}
-
-        if (lines[index][0] < dataXmin){dataXmin = lines[index][0]}
-        if (lines[index][0] > dataXmax){dataXmax = lines[index][0]}
-
-        if (lines[index][1] < dataYmin){dataYmin = lines[index][1]}
-        if (lines[index][1] > dataYmax){dataYmax = lines[index][1]}
-      }
-
-      // console.log("mMax : " + dataMmax);
-      // console.log("mMin : " + dataMmin);
-      // console.log("xMin : " + dataXmax);
-      // console.log("xMin : " + dataXmin);
-      // console.log("yMax : " + dataYmax);
-      // console.log("yMin : " + dataYmin);
-
-      createHeightMap(lines, dataMmax, dataMmin, dataXmax, dataXmin, dataYmax, dataYmin);
-  }
-
-  function createHeightMap(l, mMax, mMin, xMax, xMin, yMax, yMin) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, 256, 256);
-    for (let index = 0; index < l.length-1; index++) {
-    
-      let xCoord = (l[index][0]-xMin)/(xMax-xMin) * 256;
-      let yCoord = (l[index][1]-yMin)/(yMax-yMin) * 256;
-      let grd = ctx.createRadialGradient(xCoord, yCoord, 1, xCoord, yCoord, 10);
-      let grey = (l[index][3]-mMin)/(mMax-mMin) * 255;
-
-      grd.addColorStop(0, "rgb(" + grey + "," + grey + "," + grey + ")");
-      grd.addColorStop(1, "transparent");
-      ctx.fillStyle = grd;
-      ctx.fillRect(0, 0, 256, 256);
-    }
-
-    heightMap.needsUpdate = true;
-  }
 
   let canvasG = document.getElementById("heightgrd");
-  let gradientMap = new THREE.CanvasTexture(canvasG);
+  let colorTexture = new THREE.CanvasTexture(canvasG);
   let ctxG = canvasG.getContext("2d");
 
-  let mires = []; 
+  let mires = [];
   for (let i = 1; i < 8; i++) {
     let img = new Image();
     img.src = "../img/mir_0" + i + ".jpg";
@@ -130,25 +19,23 @@ export function main(){
   window.addEventListener("load", ()=>{
     createGradMap();
   }, false);
-  
+
   createGradMap();
   function createGradMap() {
     mires_index = 0;
     ctxG.drawImage(mires[mires_index], 0, 0, 64, 256);
-    gradientMap.needsUpdate = true;
+    colorTexture.needsUpdate = true;
   }
-  
+
   canvasG.addEventListener("click", ()=>{
     updateGradMap();
   }, false);
-  
+
   function updateGradMap() {
     mires_index = (mires_index + 1) % 7;
     ctxG.clearRect(0, 0, 64, 256);
     ctxG.drawImage(mires[mires_index], 0, 0, 64, 256);
-    ctx.fillStyle = "rgba(255,255,255,0)";
-    ctx.fillRect(0, 0, 200, 256);
-    gradientMap.needsUpdate = true;
+    colorTexture.needsUpdate = true;
   }
 
   const scene = new THREE.Scene();
@@ -157,62 +44,171 @@ export function main(){
   const renderer = new THREE.WebGLRenderer({antialias: true});
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.domElement.id = "canvas";
+  // renderer.setClearColor(0xffffff);
   document.body.appendChild(renderer.domElement);
 
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.maxPolarAngle = Math.PI/2-0.01;
+  controls.maxPolarAngle = Math.PI/2+0.02;
 
   const gC = 0x660066;
-  scene.add(new THREE.GridHelper(50, 25, gC, gC));
+  let grid = new THREE.GridHelper(50, 25, gC, gC);
+
 
   const image = document.getElementById("img");
   let imageSrc = image.src;
+  grid.position.y = -3;
+  scene.add( grid );
 
   const xsize = document.getElementById("Xsize");
   let xsizehtml = xsize.innerHTML;
 
   const ysize = document.getElementById("Ysize");
   let ysizehtml = ysize.innerHTML;
-  
+
   let geometry = new THREE.PlaneGeometry( 50, ysizehtml/xsizehtml*50 );
   let texture = new THREE.TextureLoader().load( imageSrc );
   let material = new THREE.MeshBasicMaterial( { map: texture , side: THREE.DoubleSide} );
   let plane = new THREE.Mesh( geometry, material );
   plane.rotation.x = -Math.PI / 2;
-  plane.position.y = 1;
+  plane.position.y = -2;
   scene.add( plane );
-
-  const data = {
-    width: 50,
-    height: 50,
-    widthSegments: 750,
-    heightSegments: 750,
-  };
-
-  
-  let planeGeometry = new THREE.PlaneBufferGeometry(data.width, data.height, data.widthSegments, data.heightSegments);
-  planeGeometry.rotateX(-Math.PI * 0.5);
-
-  let heat = new THREE.Points(planeGeometry, new THREE.ShaderMaterial({
-    uniforms: {
-      heightMap: {value: heightMap},
-      heightRatio: {value: 10},
-      heightBias: {value: 7},
-      gradientMap: {value: gradientMap}
-    },
-    vertexShader: heatVertex,
-    fragmentShader: heatFragment,
-    transparent: true,
-  }));
-  
-  scene.add(heat);
-  
-    var gui = new dat.GUI();
-    gui.add(heat.material.uniforms.heightRatio, "value", 0, 25).name("heightRatio");
-    gui.add(heat.material.uniforms.heightBias, "value", 1, 10).name("heightBias");
 
   window.addEventListener( 'resize', onWindowResize, false );
 
+
+
+  let uniforms = {
+    colorTexture: {value: colorTexture}
+  }
+
+
+
+  let meshBasic = new THREE.MeshBasicMaterial({
+    side: THREE.DoubleSide,
+    onBeforeCompile: shader => {
+      shader.uniforms.colorTexture = uniforms.colorTexture;
+      shader.vertexShader = `
+        varying vec3 vPos;
+        ${shader.vertexShader}
+      `.replace(
+        `#include <fog_vertex>`,
+        `#include <fog_vertex>
+        vPos = vec3(position);
+        `
+      );
+      shader.fragmentShader = `
+      uniform float limits;
+      uniform sampler2D colorTexture;
+
+        varying vec3 vPos;
+        ${shader.fragmentShader}
+      `.replace(
+        `vec4 diffuseColor = vec4( diffuse, opacity );`,
+        `
+        float h = vPos.y;
+        vec4 diffuseColor = texture2D(colorTexture, vec2(0, h));
+        `
+        );
+      }
+    })
+
+
+
+    const datstr = document.getElementById("dat");
+    let dathtml = datstr.innerHTML;
+
+    if (dathtml) {
+        let lines = dathtml.trim().split('\n')
+
+        for (let i = 0; i < lines.length; i++) {
+          lines[i] = lines[i].split('\t');
+          for (let j = 0; j < lines[i].length; j++) {
+            lines[i][j] = parseFloat(lines[i][j]);
+          }
+        }
+
+        let dataMmin = lines[0][3];
+        let dataMmax = lines[0][3];
+        let dataXmax = lines[0][0];
+        let dataXmin = lines[0][0];
+        let dataYmax = lines[0][1];
+        let dataYmin = lines[0][1];
+        let x=lines[0][0];
+        let y=lines[0][1];
+        let z=lines[0][2];
+        let dif=0;
+        let step=Number.MAX_SAFE_INTEGER;
+        // console.log("step : " + step);
+
+        for (let index = 0; index < lines.length; index++) {
+          for (let indexColumn = 3; indexColumn < lines[0].length; indexColumn++) {
+            dataMmin = Math.min(lines[index][indexColumn],dataMmin);
+            dataMmax = Math.max(lines[index][indexColumn],dataMmax);
+          }
+
+          dif = Math.abs(x - lines[index][0]);
+          if (dif > 0) {
+            step = Math.min(step, dif);
+          }
+          dif = Math.abs(y - lines[index][1]);
+          if (dif > 0) {
+            step = Math.min(step, dif);
+          }
+          dif = Math.abs(z - lines[index][2]);
+          if (dif > 0) {
+            step = Math.min(step, dif);
+          }
+          x = lines[index][0];
+          y = lines[index][1];
+          z = lines[index][2];
+
+          dataXmin = Math.min(lines[index][0],dataXmin);
+          dataYmin = Math.min(lines[index][1],dataYmin);
+          dataXmax = Math.max(lines[index][0],dataXmax);
+          dataYmax = Math.max(lines[index][1],dataYmax);
+        }
+        let numberX=Math.floor((Math.abs(dataXmax - dataXmin) / step) + 1);
+        let numberY=Math.floor((Math.abs(dataYmax - dataYmin) / step) + 1);
+        step=Math.round(step);
+
+
+        let planeHeightmap = new THREE.PlaneBufferGeometry(numberX, numberY, numberX-1, numberY-1);
+        // console.log("numberX : " + numberX);
+        // console.log("numberY : " + numberY);
+        // console.log("step : " + step);
+        planeHeightmap.rotateX(-Math.PI * 0.5);
+        let o = new THREE.Mesh(planeHeightmap, meshBasic);
+        scene.add(o);
+        let pos = planeHeightmap.attributes.position;
+        let uv = planeHeightmap.attributes.uv;
+        // console.log("lines : " + lines.length);
+        // console.log("planeHeightmap.attributes.position : " + pos.count);
+        let indexPos=0;
+        let index=0;
+        for ( x = 0; x < numberX; x++) {
+          for (y = 0; y < numberY; y++) {
+            indexPos=x+y*numberX;
+            pos.setY(indexPos,(lines[index][3]-dataMmin)/(dataMmax-dataMmin));
+            index = index + 1 ;
+          }
+        }
+        pos.needsUpdate = true;
+    }
+    else{
+      let planeHeightmap = new THREE.PlaneBufferGeometry(50, 50, 10, 10);
+      planeHeightmap.rotateX(-Math.PI * 0.5);
+      let o = new THREE.Mesh(planeHeightmap, meshBasic);
+      scene.add(o);
+      let pos = planeHeightmap.attributes.position;
+      let uv = planeHeightmap.attributes.uv;
+      for (let i = 0; i < pos.count; i++) {
+        let uvX = uv.getX(i);
+        let uvY = uv.getY(i);
+        // pos.setY(i,uvY)
+        pos.setY(i, noise.simplex3(uvX, uvY, 0)*1.5);
+      }
+      pos.needsUpdate = true;
+    }
   if (document.getElementById ("stat")) {
     document.body.removeChild(document.getElementById ("stat"));
   }
@@ -241,20 +237,18 @@ export function main(){
   document.body.appendChild( stats3.dom );
 
 
-  render();
-  function render(){
-    requestAnimationFrame(render);
+  renderer.setAnimationLoop(()=>{
     renderer.render(scene, camera);
     stats.update()
     stats2.update()
     stats3.update()
-  }
+  })
+
 
   function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize( window.innerWidth, window.innerHeight );
-
   }
 }
 main();
