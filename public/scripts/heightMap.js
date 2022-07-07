@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from '../lib/OrbitControls.js';
-// import * as HMC from './heightMapCanvas.js';
+import { makePlot } from './plot.js';
 
 export function main(){
 
@@ -40,12 +40,13 @@ export function main(){
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+  const section = document.getElementById("section")
   camera.position.set(0, 40, 60);
   const renderer = new THREE.WebGLRenderer({antialias: true});
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(window.innerWidth-78, window.innerHeight);
   renderer.domElement.id = "canvas";
-  // renderer.setClearColor(0xffffff);
-  document.body.appendChild(renderer.domElement);
+  renderer.setClearColor(0xE4E9F7);
+  section.appendChild(renderer.domElement);
 
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.maxPolarAngle = Math.PI/2+0.02;
@@ -171,6 +172,8 @@ export function main(){
         let numberY=Math.floor((Math.abs(dataYmax - dataYmin) / step) + 1);
         step=Math.round(step);
 
+        console.log(numberX, numberY);
+
 
         let planeHeightmap = new THREE.PlaneBufferGeometry(numberX, numberY, numberX-1, numberY-1);
         // console.log("numberX : " + numberX);
@@ -193,21 +196,12 @@ export function main(){
           }
         }
         pos.needsUpdate = true;
+
+        makePlot(lines, 0, numberX, numberY);
+
     }
     else{
-      let planeHeightmap = new THREE.PlaneBufferGeometry(50, 50, 10, 10);
-      planeHeightmap.rotateX(-Math.PI * 0.5);
-      let o = new THREE.Mesh(planeHeightmap, meshBasic);
-      scene.add(o);
-      let pos = planeHeightmap.attributes.position;
-      let uv = planeHeightmap.attributes.uv;
-      for (let i = 0; i < pos.count; i++) {
-        let uvX = uv.getX(i);
-        let uvY = uv.getY(i);
-        // pos.setY(i,uvY)
-        pos.setY(i, noise.simplex3(uvX, uvY, 0)*1.5);
-      }
-      pos.needsUpdate = true;
+
     }
   if (document.getElementById ("stat")) {
     document.body.removeChild(document.getElementById ("stat"));
@@ -216,7 +210,7 @@ export function main(){
   stats.showPanel( 0 );
   stats.domElement.style.cssText = 'position:absolute;bottom:0px;right:160px;';
   stats.domElement.id = "stat";
-  document.body.appendChild( stats.dom );
+  section.appendChild( stats.dom );
 
   if (document.getElementById ("stat2")) {
     document.body.removeChild(document.getElementById ("stat2"));
@@ -225,7 +219,7 @@ export function main(){
   stats2.showPanel( 1 );
   stats2.domElement.style.cssText = 'position:absolute;bottom:0px;right:80px;';
   stats2.domElement.id = "stat2";
-  document.body.appendChild( stats2.dom );
+  section.appendChild( stats2.dom );
 
   if (document.getElementById ("stat3")) {
     document.body.removeChild(document.getElementById ("stat3"));
@@ -234,7 +228,7 @@ export function main(){
   stats3.showPanel( 2 );
   stats3.domElement.style.cssText = 'position:absolute;bottom:0px;right:0px;';
   stats3.domElement.id = "stat3";
-  document.body.appendChild( stats3.dom );
+  section.appendChild( stats3.dom );
 
 
   renderer.setAnimationLoop(()=>{

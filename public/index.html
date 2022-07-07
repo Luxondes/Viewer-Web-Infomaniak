@@ -1,35 +1,109 @@
 <!DOCTYPE html>
 <html>
 
-	<head>
-		<meta charset="utf-8">
-		<title>ViewerWeb</title>
-		<link rel="stylesheet" href="styles/style.css">
-	</head>
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="styles/style.css">
+	<link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+</head>
 
-	<body>
+<body>
+	<div class="sidebar">
+    	<div class="logo-details">
+      		<i class='bx bxl-javascript icon'></i>
+        	<div class="logo_name">ViewerWeb</div>
+        	<i class='bx bx-menu' id="btn" ></i>
+    	</div>
+		<ul class="nav-list">
+			<li>
+				<a href="#" id="dataBtn">
+					<i class='bx bx-folder-open' ></i>
+					<span class="links_name">Data</span>
+				</a>
+				<span class="tooltip">Data</span>
+			</li>
+			<li>
+				<a href="#" id="optionBtn">
+					<i class='bx bx-slider'></i>
+					<span class="links_name">Option</span>
+				</a>
+				<span class="tooltip">Option</span>
+			</li>
+			<li>
+				<a href="#" id="filesBtn">
+					<i class='bx bx-file' ></i>
+					<span class="links_name">Files</span>
+				</a>
+				<span class="tooltip">Files</span>
+			</li>
+			<li>
+				<a href="#" id="graphBtn">
+					<i class='bx bx-line-chart' ></i>
+					<span class="links_name">Graph</span>
+				</a>
+				<span class="tooltip">Graph</span>
+			</li>
+			<li>
+				<a href="#" id="settingBtn">
+					<i class='bx bx-cog' ></i>
+					<span class="links_name">Setting</span>
+				</a>
+				<span class="tooltip">Setting</span>
+			</li>
+			<li class="profile">
+				<div class="profile-details">
+				<img src="img/luxondes.jpg" alt="">
+				<div class="name_job">
+					<div class="name">Luxondes</div>
+				</div>
+				</div>
+				<i class='bx bx-log-out' id="log_out" ></i>
+			</li>
+		</ul>
+	</div>
 
-		<div id="pannel" >
-
-			<label class="button" id="selector">File Selector</label>
-			<div id="souspannel">
+	<section class="home-section" id="section">
+		<div id="data" class="hidden">
+			<p>Upload an image with the files dialogs or by dragging and dropping image onto the datas zones</p>
+			<hr>
+			<div id="data1">
+				<p>Data 1</p>
 				<form>
-					<p>Upload an image with the file dialog or by dragging and dropping image onto the screen</p>
-					<input type="file" id="fileElem" multiple accept="*">
-					<label class="button" for="fileElem">Select a file</label>
+					<input type="file" id="fileElemAdd" multiple accept="*">
+					<label class="button" for="fileElemAdd">Add</label>
+				</form>
+				<form>
+					<label class="button" id="fileElemRemove">Remove</label>
 				</form>
 
-				<div id="gallery"/>
+				<div class="gallery">
 					<img src='img/nuitEtoile.jpg' id="img" class=" drop">
 				</div>
+			</div>
+			<hr>
+			<div id="data2">
+				<p>Data 2</p>
+				<form>
+					<input type="file" id="fileElemAdd" multiple accept="*">
+					<label class="button" for="fileElemAdd">Add</label>
+				</form>
+				<form>
+					<label class="button" id="fileElemRemove">Remove</label>
+				</form>
 
-				<hr>
+				<div class="gallery">
+					<img src='img/nuitEtoile.jpg' id="img" class=" drop">
+				</div>
+			</div>
+
+
+				<div id="plot"></div>
 	
 				<div id="container"></div>
-			</div>
+
 		</div>
 
-		<div id="data">
+		<div id="datas" class="hidden">
 			<p id="Xsize">1</p>
 			<p id="Ysize">1</p>
 			<p id="dat"></p>
@@ -38,18 +112,59 @@
 		<div id="drop-area" class="hidden"></div>
 
 		<canvas id="heightgrd" width="64" height="256" style="position:absolute;right:0px;"></canvas>
+	</section>
 
-		<script src="lib/dat.gui.min.js"></script>
-		<script src="lib/stats.min.js"></script>
-		<script src="lib/Noise.js"></script>
-		<script type="importmap">
-			{
-				"imports": { "three": "./lib/three-module.js" }
+	<script>
+		let sidebar = document.querySelector(".sidebar");
+		let closeBtn = document.querySelector("#btn");
+
+		let dataBtn = document.querySelector("#dataBtn");
+		let status = [true]
+		let menus = [document.querySelector("#data")]
+
+
+		closeBtn.addEventListener("click", ()=>{
+			sidebar.classList.toggle("open");
+			menuBtnChange();
+		});
+		function menuBtnChange() {
+			if(sidebar.classList.contains("open")){
+				closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+			}else {
+				closeBtn.classList.replace("bx-menu-alt-right","bx-menu");
 			}
-		</script>
-		<script type="module" src="scripts/fileManager.js"></script>
-		<script type="module" src="scripts/heightMap.js"></script>
+		}
 
-	</body>
-	
+		dataBtn.addEventListener("click", ()=>{
+			hide(0);
+		});
+
+
+		function hide(i){
+			if (status[i]){
+				menus[i].classList.remove('hidden');
+				status[i] = false;
+			}else{
+				menus[i].classList.add('hidden');
+				status[i] = true;
+			}
+		}
+
+	</script>
+
+	<script src="lib/dat.gui.min.js"></script>
+	<script src="lib/stats.min.js"></script>
+	<script src="lib/plotly.min.js"></script>
+	<script src="lib/Noise.js"></script>
+	<script type="importmap">
+		{
+			"imports": { "three": "./lib/three-module.js" }
+		}
+	</script>
+	<!-- <script type="module" src="scripts/fileManager.js"></script> -->
+	<script type="module" src="scripts/heightMap.js"></script>
+	<script type="module" src="scripts/plot.js"></script>
+
+</body>
+
 </html>
