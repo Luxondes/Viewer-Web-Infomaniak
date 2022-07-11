@@ -84,7 +84,7 @@ function handleFiles(files) {
       .then(json =>
       {
         loadFiles(json.files); // chargement fichiers
-        main();
+        section.removeChild(document.getElementById ("canvas"));
       })
       .catch((err) => ("Submit Error", err)); // retour d'erreur
   }
@@ -132,7 +132,7 @@ function handleFiles(files) {
                     document.getElementById("Xsize").innerHTML = xmlDoc.getElementsByTagName("Xsize")[0].childNodes[0].nodeValue;
                     document.getElementById("Ysize").innerHTML = xmlDoc.getElementsByTagName("Ysize")[0].childNodes[0].nodeValue;
                 }
-                section.removeChild(document.getElementById ("canvas"));
+                
 
                 while (document.getElementById("container").firstElementChild){
                   document.getElementById("container").removeChild(list.firstElementChild);                  
@@ -168,6 +168,7 @@ function handleFiles(files) {
                 {
                   let datTexte = json.texte;
                   document.getElementById("dat").innerHTML = datTexte;
+                  main();
                 })
                 .catch((err) => ("Submit Error", err)); // retour d'erreur
               break;
