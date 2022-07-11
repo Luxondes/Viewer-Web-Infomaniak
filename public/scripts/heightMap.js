@@ -203,39 +203,39 @@ export function main(){
       console.log("no dat");
     }
     
-  // if (document.getElementById ("stat")) {
-  //   document.body.removeChild(document.getElementById ("stat"));
-  // }
-  // const stats = new Stats();
-  // stats.showPanel( 0 );
-  // stats.domElement.style.cssText = 'position:absolute;bottom:0px;right:160px;';
-  // stats.domElement.id = "stat";
-  // section.appendChild( stats.dom );
+  if (document.getElementById ("stat")) {
+    document.body.removeChild(document.getElementById ("stat"));
+  }
+  const stats = new Stats();
+  stats.showPanel( 0 );
+  stats.domElement.style.cssText = 'position:absolute;bottom:0px;right:160px;z-index:99;';
+  stats.domElement.id = "stat";
+  document.body.appendChild( stats.dom );
 
-  // if (document.getElementById ("stat2")) {
-  //   document.body.removeChild(document.getElementById ("stat2"));
-  // }
-  // const stats2 = new Stats();
-  // stats2.showPanel( 1 );
-  // stats2.domElement.style.cssText = 'position:absolute;bottom:0px;right:80px;';
-  // stats2.domElement.id = "stat2";
-  // section.appendChild( stats2.dom );
+  if (document.getElementById ("stat2")) {
+    document.body.removeChild(document.getElementById ("stat2"));
+  }
+  const stats2 = new Stats();
+  stats2.showPanel( 1 );
+  stats2.domElement.style.cssText = 'position:absolute;bottom:0px;right:80px;z-index:99;';
+  stats2.domElement.id = "stat2";
+  document.body.appendChild( stats2.dom );
 
-  // if (document.getElementById ("stat3")) {
-  //   document.body.removeChild(document.getElementById ("stat3"));
-  // }
-  // const stats3 = new Stats();
-  // stats3.showPanel( 2 );
-  // stats3.domElement.style.cssText = 'position:absolute;bottom:0px;right:0px;';
-  // stats3.domElement.id = "stat3";
-  // section.appendChild( stats3.dom );
+  if (document.getElementById ("stat3")) {
+    document.body.removeChild(document.getElementById ("stat3"));
+  }
+  const stats3 = new Stats();
+  stats3.showPanel( 2 );
+  stats3.domElement.style.cssText = 'position:absolute;bottom:0px;right:0px;z-index:99;';
+  stats3.domElement.id = "stat3";
+  document.body.appendChild( stats3.dom );
 
 
   renderer.setAnimationLoop(()=>{
     renderer.render(scene, camera);
-    // stats.update()
-    // stats2.update()
-    // stats3.update()
+    stats.update()
+    stats2.update()
+    stats3.update()
   })
 
 
