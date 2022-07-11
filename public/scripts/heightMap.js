@@ -55,7 +55,7 @@ export function main(){
   let grid = new THREE.GridHelper(50, 25, gC, gC);
 
 
-  const image = document.getElementById("img");
+  const image = document.getElementById("img1");
   let imageSrc = image.src;
   grid.position.y = -3;
   scene.add( grid );
@@ -172,7 +172,6 @@ export function main(){
         let numberY=Math.floor((Math.abs(dataYmax - dataYmin) / step) + 1);
         step=Math.round(step);
 
-        console.log(numberX, numberY);
 
 
         let planeHeightmap = new THREE.PlaneBufferGeometry(numberX, numberY, numberX-1, numberY-1);

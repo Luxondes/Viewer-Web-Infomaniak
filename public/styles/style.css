@@ -321,14 +321,12 @@ hr{
   overflow-y: scroll;
 } */
 
-/* #drop-area{
+#drop-area{
   position: relative;
-  border: 2px dashed #ccc;
+  border: 2px dashed #000;
   border-radius: 20px;
   position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-} */
+  height: 100%;
+  width: calc(100% - 78px);
+}
 

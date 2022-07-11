@@ -1,58 +1,41 @@
 import { main } from './heightMap.js';
 
 let dropArea = document.getElementById("drop-area");
-let fileElem = document.getElementById ("fileElem");
-let selector = document.getElementById ("selector");
-let sousPannel = document.getElementById ("souspannel");
-let pannel = document.getElementById ("pannel");
-let hiddenSelector = false;
-let hiddenDrop = false;
+let fileElem = document.getElementById ("fileElemAdd");
+let canvas = document.getElementById ("canvas");
+const section = document.getElementById("section")
+let hiddenDrop = true;
+
 
 
 // preventDefault les événements liés au drag & drop
 ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+  canvas.addEventListener(eventName, preventDefaults, false);  
   dropArea.addEventListener(eventName, preventDefaults, false);   
   document.body.addEventListener(eventName, preventDefaults, false);
 })
 
-// gestion affichage zone de drop
-;['dragleave', 'drop'].forEach(eventName => {
-  dropArea.addEventListener(eventName, hidden);
-})
-document.body.addEventListener('dragenter', unhidden);
-dropArea.addEventListener('dragenter', unhidden);
+canvas.addEventListener('dragenter', unhide);
+dropArea.addEventListener('dragenter', unhide);
 
-// gestion affichage menu 
-selector.addEventListener('click', hiddenS);
+dropArea.addEventListener('dragleave', hide);
+dropArea.addEventListener('drop', hide);
+
 
 // ajout des evenements apres avoir ajouté ou zip (drag&drop ou gestionnaire fichier)
 dropArea.addEventListener('drop', handleDrop, false);
 fileElem.addEventListener('change', handleDl, false);
 
 // fonctions affichage ou non
-function unhidden(){
+function unhide(){
     dropArea.classList.remove('hidden');
     hiddenDrop = false;
 }
-
-function hidden(){
+function hide(){
     dropArea.classList.add('hidden');
     hiddenDrop = true;
 }
 
-function hiddenS(){
-  if (hiddenSelector){
-    sousPannel.classList.remove('hidden');
-    pannel.style.border = "1px solid #ccc";
-    pannel.style.width = "20%";
-    hiddenSelector = false;
-  }else{
-    sousPannel.classList.add('hidden');
-    pannel.style.border = "1px solid rgba(0, 0, 255, 0)";
-    pannel.style.width = "auto";
-    hiddenSelector = true;
-  }
-}
 
 // fonction preventDefault
 function preventDefaults(e){
@@ -101,6 +84,7 @@ function handleFiles(files) {
       .then(json =>
       {
         loadFiles(json.files); // chargement fichiers
+        main();
       })
       .catch((err) => ("Submit Error", err)); // retour d'erreur
   }
@@ -116,7 +100,7 @@ function handleFiles(files) {
       {
   
         case 'jpg': // si image, modifie l'image du menu et du plan
-            let img = document.getElementById('img');
+            let img = document.getElementById('img1');
             img.src = url;
             break;
 
@@ -148,7 +132,7 @@ function handleFiles(files) {
                     document.getElementById("Xsize").innerHTML = xmlDoc.getElementsByTagName("Xsize")[0].childNodes[0].nodeValue;
                     document.getElementById("Ysize").innerHTML = xmlDoc.getElementsByTagName("Ysize")[0].childNodes[0].nodeValue;
                 }
-                document.body.removeChild(document.getElementById ("canvas"));
+                section.removeChild(document.getElementById ("canvas"));
 
                 while (document.getElementById("container").firstElementChild){
                   document.getElementById("container").removeChild(list.firstElementChild);                  
@@ -184,7 +168,6 @@ function handleFiles(files) {
                 {
                   let datTexte = json.texte;
                   document.getElementById("dat").innerHTML = datTexte;
-                  main();
                 })
                 .catch((err) => ("Submit Error", err)); // retour d'erreur
               break;
