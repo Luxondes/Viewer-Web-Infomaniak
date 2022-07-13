@@ -92,7 +92,7 @@ function handleFiles(files) {
   function loadFiles(urls)
   {
 
-    const container = document.getElementById('container');
+    const files = document.getElementById('files');
     // récupére puis traite les url en fonction des types de fichiers
     urls.forEach(url =>
     { 
@@ -143,7 +143,7 @@ function handleFiles(files) {
                 text.setAttribute("id","xmlText");
                 text.innerHTML =  htmlspecialchars(xmlTexte);
                 element.appendChild(text);
-                container.appendChild(element);
+                files.appendChild(element);
             })
             .catch((err) => ("Submit Error", err)); // retour d'erreur
                 break;

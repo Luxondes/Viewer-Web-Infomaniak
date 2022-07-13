@@ -259,7 +259,7 @@ body::-webkit-scrollbar {
   display: none; /* for Chrome, Safari, and Opera */
 }
 
-#data{
+#data,  #option, #files, #graph{
   position: absolute;
   float: left;
   color: #fff;
@@ -278,7 +278,7 @@ body::-webkit-scrollbar {
   padding: 6px 14px;
 }
 
-#data::-webkit-scrollbar {
+#data::-webkit-scrollbar, #option::-webkit-scrollbar, #files::-webkit-scrollbar, #graph::-webkit-scrollbar {
   display: none; /* for Chrome, Safari, and Opera */
 }
 

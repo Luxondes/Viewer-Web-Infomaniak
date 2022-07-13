@@ -76,10 +76,15 @@ export function main(){
 
   window.addEventListener( 'resize', onWindowResize, false );
 
-
+  let geo = new THREE.PlaneGeometry( 50, 25 );
+  let mat = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+  let plan = new THREE.Mesh( geo, mat );
+  plan.position.z = -50;
+  scene.add( plan );
 
   let uniforms = {
-    colorTexture: {value: colorTexture}
+    colorTexture: {value: colorTexture},
+    transparent: true
   }
 
 
