@@ -56,41 +56,52 @@ export function main(){
   grid.position.y = -3;
   scene.add( grid );
 
-
-  const image = document.getElementById("img1");
-  let imageSrc = image.src;
-
+  
   const xsize = document.getElementById("Xsize");
   let xsizehtml = xsize.innerHTML;
-
+  
   const ysize = document.getElementById("Ysize");
   let ysizehtml = ysize.innerHTML;
+  
+  const image = document.getElementById("img1");
 
-  let geometry = new THREE.PlaneGeometry( 50, ysizehtml/xsizehtml*50 );
-  let texture = new THREE.TextureLoader().load( imageSrc );
-  let material = new THREE.MeshBasicMaterial( { map: texture , side: THREE.DoubleSide} );
-  let plane = new THREE.Mesh( geometry, material );
-  plane.rotation.x = -Math.PI / 2;
-  plane.position.y = -2;
-  scene.add( plane );
+  if (image) {
+    let imageSrc = image.src;
+    let geometry = new THREE.PlaneGeometry( 50, ysizehtml/xsizehtml*50 );
+    let texture = new THREE.TextureLoader().load( imageSrc );
+    let material = new THREE.MeshBasicMaterial( { map: texture , side: THREE.DoubleSide} );
+    let plane = new THREE.Mesh( geometry, material );
+    plane.rotation.x = -Math.PI / 2;
+    plane.position.y = -2;
+    scene.add( plane );
+
+    let geo = new THREE.PlaneGeometry( 50, 25 );
+    let mat = new THREE.MeshBasicMaterial({
+      color: 0xffba33,
+      side: THREE.DoubleSide,
+      opacity: 0.5,
+      transparent: true
+    });
+
+    let plan = new THREE.Mesh( geo, mat );
+    plan.position.x = -23;
+    plan.rotation.y = -Math.PI / 2;
+    scene.add( plan );
+  }
 
   window.addEventListener( 'resize', onWindowResize, false );
 
-  let geo = new THREE.PlaneGeometry( 50, 25 );
-  let mat = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
-  let plan = new THREE.Mesh( geo, mat );
-  plan.position.z = -50;
-  scene.add( plan );
+  
 
   let uniforms = {
-    colorTexture: {value: colorTexture},
-    transparent: true
+    colorTexture: {value: colorTexture}
   }
 
 
 
   let meshBasic = new THREE.MeshBasicMaterial({
     side: THREE.DoubleSide,
+    transparent: true,
     onBeforeCompile: shader => {
       shader.uniforms.colorTexture = uniforms.colorTexture;
       shader.vertexShader = `

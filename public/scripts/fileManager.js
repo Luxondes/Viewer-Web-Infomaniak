@@ -100,8 +100,16 @@ function handleFiles(files) {
       {
   
         case 'jpg': // si image, modifie l'image du menu et du plan
-            let img = document.getElementById('img1');
-            img.src = url;
+        
+            let gallery = document.getElementById("gallery");
+            if (gallery.firstElementChild){
+              gallery.removeChild(gallery.firstElementChild);                  
+            }
+
+            let element = document.createElement('img');
+            element.setAttribute("id","img1");
+            element.setAttribute("src",url);
+            gallery.appendChild(element);
             break;
 
         case 'xml':
