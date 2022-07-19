@@ -2,9 +2,9 @@ import { main } from './heightMap.js';
 
 let dropArea = document.getElementById("drop-area");
 let fileElem = document.getElementById ("fileElemAdd");
+let fileElem2 = document.getElementById ("fileElemAdd2");
 let canvas = document.getElementById ("canvas");
 const section = document.getElementById("section")
-let hiddenDrop = true;
 
 
 
@@ -16,26 +16,21 @@ let hiddenDrop = true;
 })
 
 canvas.addEventListener('dragenter', unhide);
-dropArea.addEventListener('dragenter', unhide);
-
 dropArea.addEventListener('dragleave', hide);
 dropArea.addEventListener('drop', hide);
 
-
 // ajout des evenements apres avoir ajouté ou zip (drag&drop ou gestionnaire fichier)
 dropArea.addEventListener('drop', handleDrop, false);
-fileElem.addEventListener('change', handleDl, false);
+fileElem.addEventListener('change', handleDl1, false);
+fileElem2.addEventListener('change', handleDl2, false);
 
 // fonctions affichage ou non
 function unhide(){
     dropArea.classList.remove('hidden');
-    hiddenDrop = false;
 }
 function hide(){
     dropArea.classList.add('hidden');
-    hiddenDrop = true;
 }
-
 
 // fonction preventDefault
 function preventDefaults(e){
@@ -44,9 +39,13 @@ function preventDefaults(e){
 }
 
 // récupération files gestionnaire fichier
-function handleDl(e){
+function handleDl1(){
   let files = this.files;
-  handleFiles(files);
+  handleFiles(files, 1);
+}
+function handleDl2(){
+  let files = this.files;
+  handleFiles(files, 2);
 }
 
 // récupération files drag&drop
@@ -54,7 +53,7 @@ function handleDrop(e) {
   let dt = e.dataTransfer;
   let files = dt.files;
 
-  handleFiles(files);
+  handleFiles(files, 1);
 }
 
 function htmlspecialchars(s){
@@ -68,7 +67,7 @@ function htmlspecialchars(s){
 								 :'';
 }
 
-function handleFiles(files) {
+function handleFiles(files, dataNb) {
     const formData = new FormData(); // création formData
     files = [...files];
     files.forEach(file => formData.append("files", file)); // ajout des fichiers au formData
@@ -82,17 +81,16 @@ function handleFiles(files) {
         return res.json(); // réponse format json
       })
       .then(json =>
-      {
-        loadFiles(json.files); // chargement fichiers
+      { 
+        loadFiles(json.files, dataNb); // chargement fichiers
         section.removeChild(document.getElementById ("canvas"));
       })
       .catch((err) => ("Submit Error", err)); // retour d'erreur
   }
   
-  function loadFiles(urls)
+  function loadFiles(urls, dataNb)
   {
 
-    const files = document.getElementById('files');
     // récupére puis traite les url en fonction des types de fichiers
     urls.forEach(url =>
     { 
@@ -100,14 +98,13 @@ function handleFiles(files) {
       {
   
         case 'jpg': // si image, modifie l'image du menu et du plan
-        
-            let gallery = document.getElementById("gallery");
+            let gallery = document.getElementById("gallery"+dataNb);
             if (gallery.firstElementChild){
               gallery.removeChild(gallery.firstElementChild);                  
             }
 
             let element = document.createElement('img');
-            element.setAttribute("id","img1");
+            element.setAttribute("id","img"+dataNb);
             element.setAttribute("src",url);
             gallery.appendChild(element);
             break;
@@ -137,27 +134,27 @@ function handleFiles(files) {
                 let xmlDoc = parser.parseFromString(xmlTexte,"text/xml");
                 if (xmlDoc.getElementsByTagName("Path")[0].childNodes[0].nodeValue){
                     // balises de taille de l'image
-                    document.getElementById("Xsize").innerHTML = xmlDoc.getElementsByTagName("Xsize")[0].childNodes[0].nodeValue;
-                    document.getElementById("Ysize").innerHTML = xmlDoc.getElementsByTagName("Ysize")[0].childNodes[0].nodeValue;
+                    document.getElementById("Xsize"+dataNb).innerHTML = xmlDoc.getElementsByTagName("Xsize")[0].childNodes[0].nodeValue;
+                    document.getElementById("Ysize"+dataNb).innerHTML = xmlDoc.getElementsByTagName("Ysize")[0].childNodes[0].nodeValue;
                 }
                 
 
-                while (document.getElementById("container").firstElementChild){
-                  document.getElementById("container").removeChild(list.firstElementChild);                  
+                let container = document.getElementById("container"+dataNb);
+                if (container.firstElementChild){
+                  container.removeChild(container.firstElementChild);                  
                 }
 
-                let element = document.createElement('div');
                 let text = document.createElement('code');
                 text.setAttribute("id","xmlText");
                 text.innerHTML =  htmlspecialchars(xmlTexte);
-                element.appendChild(text);
-                files.appendChild(element);
+                container.appendChild(text);
+                
             })
             .catch((err) => ("Submit Error", err)); // retour d'erreur
                 break;
           
         case 'dat':
-            let datad = JSON.stringify({
+              let datad = JSON.stringify({
                 "urls": url
               });
               fetch("./upload_dat", {
@@ -175,11 +172,11 @@ function handleFiles(files) {
                 .then(json =>
                 {
                   let datTexte = json.texte;
-                  document.getElementById("dat").innerHTML = datTexte;
+                  document.getElementById("dat"+dataNb).innerHTML = datTexte;
                   main();
                 })
                 .catch((err) => ("Submit Error", err)); // retour d'erreur
-              break;
+            break;
   
         default:
           break;
@@ -188,7 +185,6 @@ function handleFiles(files) {
   }
   
   async function deleteSignal(){
-    console.log('del');
     fetch("./delete_signal", { // envoi du signal coté serveur pour supprimer fichiers uploadés
       method:'POST',
       body: "delete_signal"

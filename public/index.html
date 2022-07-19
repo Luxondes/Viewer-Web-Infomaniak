@@ -78,49 +78,69 @@
 					<label class="button" id="fileElemRemove">Remove</label>
 				</form>
 
-				<div class="gallery" id="gallery">
+				<div class="gallery" id="gallery1">
 				</div>
 			</div>
 			<hr>
+			<div id="data2">
+				<p>Data 2</p>
+				<form>
+					<input type="file" id="fileElemAdd2" multiple accept="*">
+					<label class="button" for="fileElemAdd2">Add</label>
+				</form>
+				<form>
+					<label class="button" id="fileElemRemove">Remove</label>
+				</form>
+
+				<div class="gallery" id="gallery2">
+				</div>
+			</div>
 
 
 
 	
-			<div id="container"></div>
+			
 
 		</div>
 
 		<div id="option" class="hidden">
 			<p>Option:</p><br>
 			<p>Options to manipulate the render...</p><br>
-			<input type="range"><br>
-			<input type="range"><br>
-			<input type="checkbox"><br>
-			<input type="checkbox">
+			<input type="checkbox"  id="displayGrid" checked> Display grid<br>
+			<hr>
+			<input type="checkbox" id="displayImg1" checked> Display image 1<br>
+			<input type="checkbox" id="displayO" checked> Display heightmap 1<br>
+			<canvas id="heightgrd" width="64" height="256"></canvas><br>
+			<hr>
+			<input type="checkbox"  id="displayImg2" checked> Display image 2<br>
+			<input type="checkbox"  id="displayO2" checked> Display heightmap 2<br>
+			<canvas id="heightgrd2" width="64" height="256"></canvas>
 		</div>
 
 		<div id="files" class="hidden">
 			<p>Files:</p><br>
 			<p>Files used to set the render...</p>
+			<div id="container1"></div>
+			<hr>
+			<div id="container2"></div>
 		</div>
 
 		<div id="graph" class="hidden">
 			<p>Graph:</p><br>
 			<p>Graphs... and options...</p><br>
-			<div id="plot"></div>
-			<input type="range"><br>
-			<input type="range"><br>
-			<input type="checkbox"><br>
-			<input type="checkbox">
+			<div id="plot"></div><br>
+			<input type="checkbox"  id="displayCoupe"> Display coupe<br>
 		</div>
 
 		<div id="datas" class="hidden">
-			<p id="Xsize">1</p>
-			<p id="Ysize">1</p>
-			<p id="dat"></p>
+			<p id="Xsize1">1</p>
+			<p id="Ysize1">1</p>
+			<p id="dat1"></p>
+			<p id="Xsize2">1</p>
+			<p id="Ysize2">1</p>
+			<p id="dat2"></p>
 		</div>
 		
-		<canvas id="heightgrd" width="64" height="256" style="position:absolute;right:0px;"></canvas>
 
 		<div id="drop-area" class="hidden"></div>
 	</section>
@@ -146,8 +166,8 @@
 		let optionBtn = document.querySelector("#optionBtn");
 		let filesBtn = document.querySelector("#filesBtn");
 		let graphBtn = document.querySelector("#graphBtn");
-		let status = [true, true, true, true]
-		let menus = [document.querySelector("#data"), document.querySelector("#option"), document.querySelector("#files"), document.querySelector("#graph")]
+		let status = [true, true, true, true];
+		let menus = [document.querySelector("#data"), document.querySelector("#option"), document.querySelector("#files"), document.querySelector("#graph")];
 
 		dataBtn.addEventListener("click", ()=>{hide(0)});
 		optionBtn.addEventListener("click", ()=>{hide(1)});

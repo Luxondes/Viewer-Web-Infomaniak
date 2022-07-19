@@ -308,7 +308,7 @@ hr{
   background: #ddd;
 }
 
-#fileElemAdd{
+#fileElemAdd, #fileElemAdd2{
   display: none;
 }
 
