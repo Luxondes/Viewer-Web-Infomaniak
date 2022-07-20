@@ -202,12 +202,17 @@ export function main(){
 
 
 
-    const datstr = document.getElementById("dat1");
-    const datstr2 = document.getElementById("dat2");
+    let datstr = document.getElementById("dat1");
+    let datstr2 = document.getElementById("dat2");
+    let abr1 = document.getElementById("abr1");
+    let abr2 = document.getElementById("abr2");
 
     let o, o2;
 
-    if (datstr){
+    if (abr1.innerHTML == 1){
+      console.log("A0, B0 & R0");
+      // sphereGen(scene1,lines1)
+    } else if (datstr){
       o = generateMap(datstr.innerHTML, uniforms);
       scene.add( o );
   
@@ -216,7 +221,11 @@ export function main(){
       o.visible = !o.visible;
       })
     }
-    if (datstr2){
+
+    if (abr2.innerHTML == 1){
+      console.log("A0, B0 & R0");
+      // sphereGen(scene2,lines2)
+    } else if (datstr2){
       o2 = generateMap(datstr2.innerHTML, uniforms2);
       scene.add( o2 );
   

@@ -43,7 +43,6 @@ function htmlspecialchars(s){
 function handleFiles(files, dataNb) {
     const formData = new FormData(); // création formData
     files = [...files];
-    console.log("envoi server");
     files.forEach(file => formData.append("files", file)); // ajout des fichiers au formData
     // envoi du formData coté serveur pour décompression des fichiers
     fetch("./upload_files", {
@@ -56,8 +55,7 @@ function handleFiles(files, dataNb) {
       })
       .then(json =>
       { 
-        loadFiles(json.files, dataNb); // chargement fichiers
-        section.removeChild(document.getElementById ("canvas"));
+        loadFiles(json.files, dataNb); // chargement fichiers        
       })
       .catch((err) => ("Submit Error", err)); // retour d'erreur
   }
@@ -111,7 +109,14 @@ function handleFiles(files, dataNb) {
                     document.getElementById("Xsize"+dataNb).innerHTML = xmlDoc.getElementsByTagName("Xsize")[0].childNodes[0].nodeValue;
                     document.getElementById("Ysize"+dataNb).innerHTML = xmlDoc.getElementsByTagName("Ysize")[0].childNodes[0].nodeValue;
                 }
-                
+                let a0 = xmlDoc.getElementsByTagName("A0")[0];
+                let b0 = xmlDoc.getElementsByTagName("B0")[0];
+                let r0 = xmlDoc.getElementsByTagName("R0")[0];
+                if (a0 && b0 && r0) { 
+                  document.getElementById("abr"+dataNb).innerHTML = 1;
+                }else{
+                  document.getElementById("abr"+dataNb).innerHTML = 0;
+                }
 
                 let container = document.getElementById("container"+dataNb);
                 if (container.firstElementChild){
@@ -122,6 +127,8 @@ function handleFiles(files, dataNb) {
                 text.setAttribute("id","xmlText");
                 text.innerHTML =  htmlspecialchars(xmlTexte);
                 container.appendChild(text);
+                section.removeChild(document.getElementById ("canvas"));
+                main();
                 
             })
             .catch((err) => ("Submit Error", err)); // retour d'erreur
@@ -147,6 +154,7 @@ function handleFiles(files, dataNb) {
                 {
                   let datTexte = json.texte;
                   document.getElementById("dat"+dataNb).innerHTML = datTexte;
+                  section.removeChild(document.getElementById ("canvas"));
                   main();
                 })
                 .catch((err) => ("Submit Error", err)); // retour d'erreur
