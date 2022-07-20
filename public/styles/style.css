@@ -308,18 +308,9 @@ hr{
   background: #ddd;
 }
 
-#fileElemAdd, #fileElemAdd2{
+#fileElemAdd, #fileElemAdd2, .hidden{
   display: none;
 }
-
-.hidden{
-  display: none;
-}
-
-/* #container{
-  max-height : 100px;
-  overflow-y: scroll;
-} */
 
 #drop-area{
   position: relative;
@@ -329,4 +320,5 @@ hr{
   height: 100%;
   width: calc(100% - 78px);
 }
+
 

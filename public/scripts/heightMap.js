@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from '../lib/OrbitControls.js';
 import { makePlot } from './plot.js';
+import { dragDrop } from './dragDrop.js';
 
 export function main(){
 
@@ -347,5 +348,6 @@ export function main(){
   }
 
   window.addEventListener( 'resize', onWindowResize, false );
+  dragDrop();
 }
 main();

@@ -3,40 +3,13 @@ import { main } from './heightMap.js';
 let dropArea = document.getElementById("drop-area");
 let fileElem = document.getElementById ("fileElemAdd");
 let fileElem2 = document.getElementById ("fileElemAdd2");
-let canvas = document.getElementById ("canvas");
 const section = document.getElementById("section")
 
-
-
-// preventDefault les événements liés au drag & drop
-;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-  canvas.addEventListener(eventName, preventDefaults, false);  
-  dropArea.addEventListener(eventName, preventDefaults, false);   
-  document.body.addEventListener(eventName, preventDefaults, false);
-})
-
-canvas.addEventListener('dragenter', unhide);
-dropArea.addEventListener('dragleave', hide);
-dropArea.addEventListener('drop', hide);
 
 // ajout des evenements apres avoir ajouté ou zip (drag&drop ou gestionnaire fichier)
 dropArea.addEventListener('drop', handleDrop, false);
 fileElem.addEventListener('change', handleDl1, false);
 fileElem2.addEventListener('change', handleDl2, false);
-
-// fonctions affichage ou non
-function unhide(){
-    dropArea.classList.remove('hidden');
-}
-function hide(){
-    dropArea.classList.add('hidden');
-}
-
-// fonction preventDefault
-function preventDefaults(e){
-  e.preventDefault();
-  e.stopPropagation();
-}
 
 // récupération files gestionnaire fichier
 function handleDl1(){
@@ -70,6 +43,7 @@ function htmlspecialchars(s){
 function handleFiles(files, dataNb) {
     const formData = new FormData(); // création formData
     files = [...files];
+    console.log("envoi server");
     files.forEach(file => formData.append("files", file)); // ajout des fichiers au formData
     // envoi du formData coté serveur pour décompression des fichiers
     fetch("./upload_files", {

@@ -10,24 +10,25 @@ export function makePlot(dat, i, numberX, numberY){
     }
 
 
-    var trace = {
-        x: [0, 1, 2, 3, 4, 5, 6, 7, 8],
-        y: [8, 7, 6, 5, 4, 3, 2, 1, 0],
-        type: 'scatter'
-    };
-        
-    var data = [trace];
+    var xArray = [50,60,70,80,90,100,110,120,130,140,150];
+    var yArray = [7,8,8,9,9,9,10,11,14,14,15];
     
+    // Define Data
+    var data = [{
+      x: xArray,
+      y: yArray,
+      mode: "lines",
+      type: "scatter"
+    }];
+    
+    // Define Layout
     var layout = {
-        xaxis: {
-        type: 'log',
-        autorange: true
-        },
-        yaxis: {
-        type: 'log',
-        autorange: true
-        }
+      width: 422,
+      margin: {t: 30, r: 30, b: 30, l: 30},
+      xaxis: {range: [40, 160]},
+      yaxis: {range: [5, 16]}
     };
     
-    Plotly.newPlot('plot', data, layout);
+    // Display using Plotly
+    Plotly.newPlot("plot", data, layout);
 }
