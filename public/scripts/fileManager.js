@@ -55,7 +55,7 @@ function handleFiles(files, dataNb) {
       })
       .then(json =>
       { 
-        loadFiles(json.files, dataNb); // chargement fichiers        
+        loadFiles(json.files, dataNb); // chargement fichiers      
       })
       .catch((err) => ("Submit Error", err)); // retour d'erreur
   }
@@ -68,24 +68,12 @@ function handleFiles(files, dataNb) {
     { 
       switch(url.split('.').at(-1))
       {
-  
-        case 'jpg': // si image, modifie l'image du menu et du plan
-            let gallery = document.getElementById("gallery"+dataNb);
-            if (gallery.firstElementChild){
-              gallery.removeChild(gallery.firstElementChild);                  
-            }
-
-            let element = document.createElement('img');
-            element.setAttribute("id","img"+dataNb);
-            element.setAttribute("src",url);
-            gallery.appendChild(element);
-            break;
-
         case 'xml':
+
             let data = JSON.stringify({
                 "urls": url
             });
-            // envoie de l'url de l'xml pour lecture du fichier coté serveur
+
             fetch("./upload_xml", {
                 method:'POST',
                 body: data,
@@ -101,14 +89,9 @@ function handleFiles(files, dataNb) {
             .then(json =>
             {
                 let xmlTexte = json.texte;
-                // Parse puis recupere valeurs balises utiles
                 let parser = new DOMParser();
                 let xmlDoc = parser.parseFromString(xmlTexte,"text/xml");
-                if (xmlDoc.getElementsByTagName("Path")[0].childNodes[0].nodeValue){
-                    // balises de taille de l'image
-                    document.getElementById("Xsize"+dataNb).innerHTML = xmlDoc.getElementsByTagName("Xsize")[0].childNodes[0].nodeValue;
-                    document.getElementById("Ysize"+dataNb).innerHTML = xmlDoc.getElementsByTagName("Ysize")[0].childNodes[0].nodeValue;
-                }
+                
                 let a0 = xmlDoc.getElementsByTagName("A0")[0];
                 let b0 = xmlDoc.getElementsByTagName("B0")[0];
                 let r0 = xmlDoc.getElementsByTagName("R0")[0];
@@ -119,49 +102,64 @@ function handleFiles(files, dataNb) {
                 }
 
                 let container = document.getElementById("container"+dataNb);
-                if (container.firstElementChild){
-                  container.removeChild(container.firstElementChild);                  
-                }
-
+                if (container.firstElementChild){container.removeChild(container.firstElementChild);}
                 let text = document.createElement('code');
                 text.setAttribute("id","xmlText");
                 text.innerHTML =  htmlspecialchars(xmlTexte);
                 container.appendChild(text);
-                section.removeChild(document.getElementById ("canvas"));
-                main();
-                
+
+                let image = xmlDoc.getElementsByTagName("Path")[0].childNodes[0].nodeValue;
+                if (image) {
+                  let gallery = document.getElementById("gallery"+dataNb);
+                  if (gallery.firstElementChild){gallery.removeChild(gallery.firstElementChild);}
+                  let element = document.createElement('img');
+                  element.setAttribute("id","img"+dataNb);
+                  element.setAttribute("src","../files/"+image);
+                  gallery.appendChild(element);
+
+                  document.getElementById("Xsize"+dataNb).innerHTML = xmlDoc.getElementsByTagName("Xsize")[0].childNodes[0].nodeValue;
+                  document.getElementById("Ysize"+dataNb).innerHTML = xmlDoc.getElementsByTagName("Ysize")[0].childNodes[0].nodeValue;
+                }
+
+                let dat = xmlDoc.getElementsByTagName("Data_files")[0].childNodes[0].nodeValue;
+                if (dat){
+                  let datad = JSON.stringify({
+                    "urls": "files/"+dat
+                  });
+                  fetch("./upload_dat", {
+                    method:'POST',
+                    body: datad,
+                    headers: {
+                      'Accept': 'application/json',
+                      'Content-Type': 'application/json'
+                    }
+                  })
+                    .then((res) =>
+                    {
+                      return res.json(); // réponse format json
+                    })
+                    .then(json =>
+                    {
+                      let datTexte = json.texte;
+                      document.getElementById("dat"+dataNb).innerHTML = datTexte;
+
+                      section.removeChild(document.getElementById ("canvas"));
+                      main();
+                    })
+                    .catch((err) => ("Submit Error", err)); // retour d'erreur
+                }                
             })
             .catch((err) => ("Submit Error", err)); // retour d'erreur
-                break;
+            break;
           
         case 'dat':
-              let datad = JSON.stringify({
-                "urls": url
-              });
-              fetch("./upload_dat", {
-                method:'POST',
-                body: datad,
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
-                }
-              })
-                .then((res) =>
-                {
-                  return res.json(); // réponse format json
-                })
-                .then(json =>
-                {
-                  let datTexte = json.texte;
-                  document.getElementById("dat"+dataNb).innerHTML = datTexte;
-                  section.removeChild(document.getElementById ("canvas"));
-                  main();
-                })
-                .catch((err) => ("Submit Error", err)); // retour d'erreur
+            break;
+
+        case 'jpg':
             break;
   
         default:
-          break;
+            break;
       }
     });
   }
