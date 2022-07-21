@@ -2,18 +2,13 @@ import '../lib/plotly.min.js';
 
 export function makePlot(dat, i, numberX, numberY){
 
-    let lx = [];
-    let ly = [];
+    let xArray = [];
+    let yArray = [];
     for (let index = 0; index < numberY; index++) {
-        lx.push(index)
-        ly.push(dat[index][i+3]);
+      xArray.push(index)
+      yArray.push(dat[index][i+3]);
     }
-
-
-    var xArray = [50,60,70,80,90,100,110,120,130,140,150];
-    var yArray = [7,8,8,9,9,9,10,11,14,14,15];
     
-    // Define Data
     var data = [{
       x: xArray,
       y: yArray,
@@ -21,14 +16,12 @@ export function makePlot(dat, i, numberX, numberY){
       type: "scatter"
     }];
     
-    // Define Layout
     var layout = {
       width: 422,
-      margin: {t: 30, r: 30, b: 30, l: 30},
-      xaxis: {range: [40, 160]},
-      yaxis: {range: [5, 16]}
+      margin: {t: 40, r: 40, b: 40, l: 40},
+      xaxis: {range: [Math.min(...xArray)-1, Math.max(...xArray)+1]},
+      yaxis: {range: [Math.min(...yArray)-1, Math.max(...yArray)+1]}
     };
     
-    // Display using Plotly
     Plotly.newPlot("plot", data, layout);
 }

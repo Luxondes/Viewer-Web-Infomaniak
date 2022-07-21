@@ -321,4 +321,7 @@ hr{
   width: calc(100% - 78px);
 }
 
+#heightgrd, #heightgrd2{
+  user-select: none;
+}
 

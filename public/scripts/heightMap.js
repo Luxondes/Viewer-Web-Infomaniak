@@ -128,7 +128,6 @@ export function main(){
     plane.rotation.x = -Math.PI / 2;
     plane.position.y = -2;
     return plane;
-
   }
 
 
@@ -212,8 +211,8 @@ export function main(){
     if (abr1.innerHTML == 1){
       console.log("A0, B0 & R0");
       // sphereGen(scene1,lines1)
-    } else if (datstr){
-      o = generateMap(datstr.innerHTML, uniforms);
+    } else if (datstr.innerHTML){
+      o = generateMap(datstr.innerHTML, uniforms, 1);
       scene.add( o );
   
       let displayO = document.getElementById("displayO");
@@ -225,8 +224,8 @@ export function main(){
     if (abr2.innerHTML == 1){
       console.log("A0, B0 & R0");
       // sphereGen(scene2,lines2)
-    } else if (datstr2){
-      o2 = generateMap(datstr2.innerHTML, uniforms2);
+    } else if (datstr2.innerHTML){
+      o2 = generateMap(datstr2.innerHTML, uniforms2, 2);
       scene.add( o2 );
   
       let displayO2 = document.getElementById("displayO2");
@@ -235,7 +234,7 @@ export function main(){
       })
     }
 
-  function generateMap(dathtml, uniform){
+  function generateMap(dathtml, uniform, dataNb){
         let lines = dathtml.trim().split('\n');
         for (let i = 0; i < lines.length; i++) {
           lines[i] = lines[i].split('\t');

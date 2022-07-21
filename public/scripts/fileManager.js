@@ -5,6 +5,7 @@ let fileElem = document.getElementById ("fileElemAdd");
 let fileElem2 = document.getElementById ("fileElemAdd2");
 const section = document.getElementById("section")
 
+let dataDropNb = 0;
 
 // ajout des evenements apres avoir ajouté ou zip (drag&drop ou gestionnaire fichier)
 dropArea.addEventListener('drop', handleDrop, false);
@@ -14,10 +15,12 @@ fileElem2.addEventListener('change', handleDl2, false);
 // récupération files gestionnaire fichier
 function handleDl1(){
   let files = this.files;
+  dataDropNb = 1;
   handleFiles(files, 1);
 }
 function handleDl2(){
   let files = this.files;
+  dataDropNb = 0;
   handleFiles(files, 2);
 }
 
@@ -25,8 +28,9 @@ function handleDl2(){
 function handleDrop(e) {
   let dt = e.dataTransfer;
   let files = dt.files;
+  dataDropNb = (dataDropNb +1) % 2;
 
-  handleFiles(files, 1);
+  handleFiles(files, 2-dataDropNb);
 }
 
 function htmlspecialchars(s){
@@ -54,18 +58,18 @@ function handleFiles(files, dataNb) {
         return res.json(); // réponse format json
       })
       .then(json =>
-      { 
-        loadFiles(json.files, dataNb); // chargement fichiers      
+      {
+        loadFiles(json.files, dataNb); // chargement fichiers
       })
       .catch((err) => ("Submit Error", err)); // retour d'erreur
   }
-  
+
   function loadFiles(urls, dataNb)
   {
 
     // récupére puis traite les url en fonction des types de fichiers
     urls.forEach(url =>
-    { 
+    {
       switch(url.split('.').at(-1))
       {
         case 'xml':
@@ -83,7 +87,7 @@ function handleFiles(files, dataNb) {
                 }
             })
             .then((res) =>
-            {   
+            {
                 return res.json(); // réponse format json
             })
             .then(json =>
@@ -91,11 +95,13 @@ function handleFiles(files, dataNb) {
                 let xmlTexte = json.texte;
                 let parser = new DOMParser();
                 let xmlDoc = parser.parseFromString(xmlTexte,"text/xml");
-                
+
                 let a0 = xmlDoc.getElementsByTagName("A0")[0];
                 let b0 = xmlDoc.getElementsByTagName("B0")[0];
                 let r0 = xmlDoc.getElementsByTagName("R0")[0];
-                if (a0 && b0 && r0) { 
+                console.log(a0+" "+b0+" "+r0);
+                console.log(" "+ url);
+                if (a0 && b0 && r0) {
                   document.getElementById("abr"+dataNb).innerHTML = 1;
                 }else{
                   document.getElementById("abr"+dataNb).innerHTML = 0;
@@ -108,7 +114,9 @@ function handleFiles(files, dataNb) {
                 text.innerHTML =  htmlspecialchars(xmlTexte);
                 container.appendChild(text);
 
-                let image = xmlDoc.getElementsByTagName("Path")[0].childNodes[0].nodeValue;
+
+
+                let image=getStringValue(xmlDoc,"Component","Image","Path");
                 if (image) {
                   let gallery = document.getElementById("gallery"+dataNb);
                   if (gallery.firstElementChild){gallery.removeChild(gallery.firstElementChild);}
@@ -122,6 +130,7 @@ function handleFiles(files, dataNb) {
                 }
 
                 let dat = xmlDoc.getElementsByTagName("Data_files")[0].childNodes[0].nodeValue;
+                console.log(" "+ dat);
                 if (dat){
                   let datad = JSON.stringify({
                     "urls": "files/"+dat
@@ -144,26 +153,47 @@ function handleFiles(files, dataNb) {
                       document.getElementById("dat"+dataNb).innerHTML = datTexte;
 
                       section.removeChild(document.getElementById ("canvas"));
+                      console.log(" 3");
                       main();
                     })
                     .catch((err) => ("Submit Error", err)); // retour d'erreur
-                }                
+                }
             })
             .catch((err) => ("Submit Error", err)); // retour d'erreur
             break;
-          
+
         case 'dat':
             break;
 
         case 'jpg':
             break;
-  
+
         default:
             break;
       }
     });
   }
-  
+  function getStringValue(element){
+    if(arguments.length>1){
+      let sub_element=element.getElementsByTagName(arguments[1])[0];
+      if(sub_element){
+        if(arguments.length==2){
+          return sub_element.childNodes[0].nodeValue;
+        }
+        let args = new Array(arguments.length-1);
+        args[0]=sub_element;
+        let i;
+        for (i=1;i<arguments.length-1;i++){
+            args[i]=arguments[i+1];
+        }
+        return getStringValue.apply(this, args);
+      }
+      else{
+        return null;
+      }
+    }
+  }
+
   async function deleteSignal(){
     fetch("./delete_signal", { // envoi du signal coté serveur pour supprimer fichiers uploadés
       method:'POST',
@@ -171,5 +201,5 @@ function handleFiles(files, dataNb) {
     })
       .catch((err) => ("Submit Error", err)); // retour d'erreur
   }
-  
+
   window.onbeforeunload = deleteSignal; // delete avant chaque fermeture page (ou F5)
