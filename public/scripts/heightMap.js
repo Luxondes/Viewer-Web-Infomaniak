@@ -291,7 +291,7 @@ export function main(){
         }
         pos.needsUpdate = true;
         
-        makePlot(0);
+        makePlot(30);
         return (o);
     }
 
