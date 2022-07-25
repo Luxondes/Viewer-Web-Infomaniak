@@ -88,19 +88,12 @@ export function main(){
     return grid;
   }
 
-
-  const xsize1 = document.getElementById("Xsize1");
-  const xsize2 = document.getElementById("Xsize2");
-
-  const ysize1 = document.getElementById("Ysize1");
-  const ysize2 = document.getElementById("Ysize2");
-
   const image1 = document.getElementById("img1");
   const image2 = document.getElementById("img2");
 
   let plane, plane2;
   if (image1){
-    plane = generateImage(image1, xsize1.innerHTML, ysize1.innerHTML);
+    plane = generateImage(image1, sizeX1, sizeY1);
     scene.add( plane );
 
     let displayImg1 = document.getElementById("displayImg1");
@@ -109,7 +102,7 @@ export function main(){
     })
   }
   if (image2){
-    plane2 = generateImage(image2, xsize2.innerHTML, ysize2.innerHTML);
+    plane2 = generateImage(image2, sizeX2, sizeY2);
     scene.add( plane2 );
 
     let displayImg2 = document.getElementById("displayImg2");
@@ -201,18 +194,13 @@ export function main(){
 
 
 
-    let datstr = document.getElementById("dat1");
-    let datstr2 = document.getElementById("dat2");
-    let abr1 = document.getElementById("abr1");
-    let abr2 = document.getElementById("abr2");
-
     let o, o2;
 
-    if (abr1.innerHTML == 1){
+    if (sphere1 == 1){
       console.log("A0, B0 & R0");
       // sphereGen(scene1,lines1)
-    } else if (datstr.innerHTML){
-      o = generateMap(datstr.innerHTML, uniforms, 1);
+    } else if (datlines1){
+      o = generateMap(datlines1, uniforms, 1);
       scene.add( o );
   
       let displayO = document.getElementById("displayO");
@@ -221,11 +209,11 @@ export function main(){
       })
     }
 
-    if (abr2.innerHTML == 1){
+    if (sphere2 == 1){
       console.log("A0, B0 & R0");
       // sphereGen(scene2,lines2)
-    } else if (datstr2.innerHTML){
-      o2 = generateMap(datstr2.innerHTML, uniforms2, 2);
+    } else if (datlines2){
+      o2 = generateMap(datlines2, uniforms2, 2);
       scene.add( o2 );
   
       let displayO2 = document.getElementById("displayO2");
@@ -234,14 +222,7 @@ export function main(){
       })
     }
 
-  function generateMap(dathtml, uniform, dataNb){
-        let lines = dathtml.trim().split('\n');
-        for (let i = 0; i < lines.length; i++) {
-          lines[i] = lines[i].split('\t');
-          for (let j = 0; j < lines[i].length; j++) {
-            lines[i][j] = parseFloat(lines[i][j]);
-          }
-        }
+  function generateMap(lines, uniform, dataNb){
 
         let dataMmin = lines[0][3];
         let dataMmax = lines[0][3];
@@ -285,6 +266,8 @@ export function main(){
         }
         let numberX=Math.floor((Math.abs(dataXmax - dataXmin) / step) + 1);
         let numberY=Math.floor((Math.abs(dataYmax - dataYmin) / step) + 1);
+        if (dataNb == 1){numberX1 = numberX; numberY1 = numberY;}
+        if (dataNb == 2){numberX2 = numberX; numberY2 = numberY;}
         step=Math.round(step);
 
         let planeHeightmap = new THREE.PlaneBufferGeometry(numberX, numberY, numberX-1, numberY-1);
@@ -308,7 +291,7 @@ export function main(){
         }
         pos.needsUpdate = true;
         
-        makePlot(lines, 0, numberX, numberY);
+        makePlot(0);
         return (o);
     }
 

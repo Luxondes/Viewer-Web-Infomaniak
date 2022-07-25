@@ -130,24 +130,26 @@
 			<p>Graphs... and options...</p><br>
 			<div id="plot"></div><br>
 			<input type="checkbox"  id="displayCoupe"> Display coupe<br>
-		</div>
-
-		<div id="datas" class="hidden">
-			<p id="Xsize1">1</p>
-			<p id="Ysize1">1</p>
-			<p id="dat1"></p>
-			<p id="abr1">0</p>
-			<p id="Xsize2">1</p>
-			<p id="Ysize2">1</p>
-			<p id="dat2"></p>
-			<p id="abr2">0</p>
-			<p id="datDropNb">0</p>
-		</div>
-		
+		</div>		
 
 		<div id="drop-area" class="hidden"></div>
 	</section>
 
+	<script>
+		let datDropNb = 0;
+		let sphere1 = 0;
+		let sphere2 = 0;
+		let datlines1;
+		let datlines2;
+		let sizeX1 = 1;
+		let sizeY1 = 1;
+		let sizeX2 = 1;
+		let sizeY2 = 1;
+		let numberX1;
+		let numberX2;
+		let numberY1;
+		let numberY2;
+	</script>
 
 	<script src="lib/dat.gui.min.js"></script>
 	<script src="lib/stats.min.js"></script>

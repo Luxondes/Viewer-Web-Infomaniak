@@ -91,20 +91,20 @@ function handleFiles(files, dataNb) {
                 return res.json(); // réponse format json
             })
             .then(json =>
-            {
+            {   
                 let xmlTexte = json.texte;
                 let parser = new DOMParser();
                 let xmlDoc = parser.parseFromString(xmlTexte,"text/xml");
 
-                let a0 = xmlDoc.getElementsByTagName("A0")[0];
-                let b0 = xmlDoc.getElementsByTagName("B0")[0];
-                let r0 = xmlDoc.getElementsByTagName("R0")[0];
-                console.log(a0+" "+b0+" "+r0);
-                console.log(" "+ url);
+                let a0=getStringValue(xmlDoc,"Data","A0");
+                let b0 = getStringValue(xmlDoc,"Data","B0");
+                let r0 =getStringValue(xmlDoc,"Data","R0");
                 if (a0 && b0 && r0) {
-                  document.getElementById("abr"+dataNb).innerHTML = 1;
+                  if (dataNb == 1){sphere1 = 1;}
+                  if (dataNb == 2){sphere2 = 1;}
                 }else{
-                  document.getElementById("abr"+dataNb).innerHTML = 0;
+                  if (dataNb == 1){sphere1 = 0;}
+                  if (dataNb == 2){sphere2 = 0;}
                 }
 
                 let container = document.getElementById("container"+dataNb);
@@ -114,9 +114,8 @@ function handleFiles(files, dataNb) {
                 text.innerHTML =  htmlspecialchars(xmlTexte);
                 container.appendChild(text);
 
-
-
                 let image=getStringValue(xmlDoc,"Component","Image","Path");
+                // console.log(" "+ image);
                 if (image) {
                   let gallery = document.getElementById("gallery"+dataNb);
                   if (gallery.firstElementChild){gallery.removeChild(gallery.firstElementChild);}
@@ -124,13 +123,14 @@ function handleFiles(files, dataNb) {
                   element.setAttribute("id","img"+dataNb);
                   element.setAttribute("src","../files/"+image);
                   gallery.appendChild(element);
-
-                  document.getElementById("Xsize"+dataNb).innerHTML = xmlDoc.getElementsByTagName("Xsize")[0].childNodes[0].nodeValue;
-                  document.getElementById("Ysize"+dataNb).innerHTML = xmlDoc.getElementsByTagName("Ysize")[0].childNodes[0].nodeValue;
+                  let x = parseInt(getStringValue(xmlDoc,"Component","Image","Xsize"));
+                  let y = parseInt(getStringValue(xmlDoc,"Component","Image","Ysize"));
+                  if (dataNb == 1){sizeX1 = x; sizeY1 = y;}
+                  if (dataNb == 2){sizeX2 = x; sizeY2 = y;}
                 }
 
-                let dat = xmlDoc.getElementsByTagName("Data_files")[0].childNodes[0].nodeValue;
-                console.log(" "+ dat);
+                let dat=getStringValue(xmlDoc,"Data","Measurement","Data_files");
+                // console.log(" "+ dat);
                 if (dat){
                   let datad = JSON.stringify({
                     "urls": "files/"+dat
@@ -148,12 +148,20 @@ function handleFiles(files, dataNb) {
                       return res.json(); // réponse format json
                     })
                     .then(json =>
-                    {
+                    { 
                       let datTexte = json.texte;
-                      document.getElementById("dat"+dataNb).innerHTML = datTexte;
+                      
+                      let lines = datTexte.trim().split('\n');
+                      for (let i = 0; i < lines.length; i++) {
+                        lines[i] = lines[i].split('\t');
+                        for (let j = 0; j < lines[i].length; j++) {
+                          lines[i][j] = parseFloat(lines[i][j]);
+                        }
+                      }
+                      if (dataNb == 1){datlines1 = lines}
+                      if (dataNb == 2){datlines2 = lines}
 
                       section.removeChild(document.getElementById ("canvas"));
-                      console.log(" 3");
                       main();
                     })
                     .catch((err) => ("Submit Error", err)); // retour d'erreur
@@ -173,12 +181,17 @@ function handleFiles(files, dataNb) {
       }
     });
   }
-  function getStringValue(element){
+  function getStringValue(){
     if(arguments.length>1){
-      let sub_element=element.getElementsByTagName(arguments[1])[0];
-      if(sub_element){
+      let sub_element=arguments[0].getElementsByTagName(arguments[1])[0];
+      if(sub_element != null || sub_element != undefined){
         if(arguments.length==2){
-          return sub_element.childNodes[0].nodeValue;
+          if(sub_element.childNodes.length>0){
+            return sub_element.childNodes[0].nodeValue;
+          }
+          else{
+            return null;
+          }
         }
         let args = new Array(arguments.length-1);
         args[0]=sub_element;
@@ -188,10 +201,8 @@ function handleFiles(files, dataNb) {
         }
         return getStringValue.apply(this, args);
       }
-      else{
-        return null;
-      }
     }
+    return null;
   }
 
   async function deleteSignal(){
