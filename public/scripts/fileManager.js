@@ -1,4 +1,5 @@
 import { main } from './heightMap.js';
+import { makePlot } from './plot.js';
 
 let dropArea = document.getElementById("drop-area");
 let fileElem = document.getElementById ("fileElemAdd");
@@ -160,6 +161,11 @@ function handleFiles(files, dataNb) {
                       }
                       if (dataNb == 1){datlines1 = lines}
                       if (dataNb == 2){datlines2 = lines}
+
+                      document.getElementById("coupeOptions").classList.remove('hidden');
+                      if (dataNb == 1){document.getElementById("render1Options").classList.remove('hidden');}
+                      if (dataNb == 2){document.getElementById("render2Options").classList.remove('hidden');}
+
 
                       section.removeChild(document.getElementById ("canvas"));
                       main();

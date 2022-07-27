@@ -116,7 +116,7 @@ export function main(){
     let imageSrc = image.src;
     let geometry = new THREE.PlaneGeometry( 50, ysize/xsize*50 );
     let texture = new THREE.TextureLoader().load( imageSrc );
-    let material = new THREE.MeshBasicMaterial( { map: texture , side: THREE.DoubleSide} );
+    let material = new THREE.MeshBasicMaterial( { map: texture , side: THREE.DoubleSide, opacity: 1, transparent: true} );
     let plane = new THREE.Mesh( geometry, material );
     plane.rotation.x = -Math.PI / 2;
     plane.position.y = -2;
@@ -134,6 +134,64 @@ export function main(){
     plan.visible = !plan.visible;
   })
   
+  let defaultValue = -23;
+  let coupePosx = document.getElementById("range");
+  let value = document.getElementById("value");
+  value.innerHTML = defaultValue;
+  coupePosx.addEventListener("input", () => {
+    value.innerHTML = coupePosx.value;
+    if (plan.rotation.y == Math.PI) {
+      plan.position.z = coupePosx.value;
+    }else{
+      plan.position.x = coupePosx.value;
+    }
+  })
+
+  let defaultValue2 = 100;
+  let coupePosx2 = document.getElementById("range2");
+  let value2 = document.getElementById("value2");
+  value2.innerHTML = defaultValue2;
+  coupePosx2.addEventListener("input", () => {
+    value2.innerHTML = coupePosx2.value;
+    plane.material.opacity = (coupePosx2.value)/100;
+  })
+
+  let defaultValue4 = 100;
+  let coupePosx4 = document.getElementById("range4");
+  let value4 = document.getElementById("value4");
+  value4.innerHTML = defaultValue4;
+  coupePosx4.addEventListener("input", () => {
+    value4.innerHTML = coupePosx4.value;
+    plane2.material.opacity = (coupePosx4.value)/100;
+  })
+
+  let defaultValue3 = 100;
+  let coupePosx3 = document.getElementById("range3");
+  let value3 = document.getElementById("value3");
+  value3.innerHTML = defaultValue3;
+  coupePosx3.addEventListener("input", () => {
+    value3.innerHTML = coupePosx3.value;
+    o.uniforms.heighparam.value.set(coupePosx3.value);
+  })
+
+  let axeCoupe = document.getElementById("coupexy");
+    axeCoupe.addEventListener("change", () => {
+    if (plan.rotation.y == Math.PI) {
+      console.log("x");
+      plan.rotation.y = -Math.PI / 2;
+      plan.position.x = -23;
+      plan.position.z = 0;
+      makePlot(30, "x");
+    }else{
+      console.log("y");
+      plan.rotation.y = Math.PI;
+      plan.position.x = 0;
+      plan.position.z = -23;
+      makePlot(13, "y");
+    }
+    coupePosx.value = -23;
+    value.innerHTML = defaultValue;
+  })
 
   function generateCoupe(){
     let geo = new THREE.PlaneGeometry( 50, 25 );
@@ -152,7 +210,8 @@ export function main(){
 
   
   let uniforms = {
-    colorTexture: {value: colorTexture}
+    colorTexture: {value: colorTexture},
+    heighparam: {value: 0}
   }
   let uniforms2 = {
     colorTexture: {value: colorTexture2}
@@ -165,19 +224,20 @@ export function main(){
       transparent: true,
       onBeforeCompile: shader => {
         shader.uniforms.colorTexture = uniforms.colorTexture;
+        shader.uniforms.heighparam = uniforms.heighparam;
         shader.vertexShader = `
+        uniform float heighparam;
           varying vec3 vPos;
           ${shader.vertexShader}
         `.replace(
           `#include <fog_vertex>`,
           `#include <fog_vertex>
-          vPos = vec3(position);
+          vPos = vec3(position.x,position.y+heighparam,position.z);
           `
         );
         shader.fragmentShader = `
         uniform float limits;
         uniform sampler2D colorTexture;
-
           varying vec3 vPos;
           ${shader.fragmentShader}
         `.replace(
@@ -290,8 +350,7 @@ export function main(){
           }
         }
         pos.needsUpdate = true;
-        
-        makePlot(30);
+        makePlot(13, "y");
         return (o);
     }
 
