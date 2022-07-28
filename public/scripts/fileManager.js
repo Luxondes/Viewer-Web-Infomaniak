@@ -162,9 +162,19 @@ function handleFiles(files, dataNb) {
                       if (dataNb == 1){datlines1 = lines}
                       if (dataNb == 2){datlines2 = lines}
 
+                      if (dataNb == 1){isEmpty1 = false}
+                      if (dataNb == 2){isEmpty2 = false}
+
                       document.getElementById("coupeOptions").classList.remove('hidden');
-                      if (dataNb == 1){document.getElementById("render1Options").classList.remove('hidden');}
-                      if (dataNb == 2){document.getElementById("render2Options").classList.remove('hidden');}
+                      document.getElementById("render3Options").classList.remove('hidden');
+                      if (dataNb == 1){
+                        document.getElementById("render1Options").classList.remove('hidden');
+                        document.getElementById("file1").classList.remove('hidden');
+                    }
+                      if (dataNb == 2){
+                        document.getElementById("render2Options").classList.remove('hidden');
+                        document.getElementById("file2").classList.remove('hidden');
+                    }
 
 
                       section.removeChild(document.getElementById ("canvas"));

@@ -125,7 +125,6 @@ export function main(){
 
 
 
- 
   let plan = generateCoupe();
   scene.add( plan );
 
@@ -133,7 +132,7 @@ export function main(){
   displayCoupe.addEventListener("change", () => {
     plan.visible = !plan.visible;
   })
-  
+
   let defaultValue = -23;
   let coupePosx = document.getElementById("range");
   let value = document.getElementById("value");
@@ -147,13 +146,22 @@ export function main(){
     }
   })
 
+  let uniforms = {
+    colorTexture: {value: colorTexture},
+    transparency: {value: 1}
+  }
+  let uniforms2 = {
+    colorTexture: {value: colorTexture},
+    transparency: {value: 1}
+  }
+
   let defaultValue2 = 100;
   let coupePosx2 = document.getElementById("range2");
   let value2 = document.getElementById("value2");
   value2.innerHTML = defaultValue2;
   coupePosx2.addEventListener("input", () => {
     value2.innerHTML = coupePosx2.value;
-    plane.material.opacity = (coupePosx2.value)/100;
+    plane.material.opacity = coupePosx2.value/100;
   })
 
   let defaultValue4 = 100;
@@ -162,7 +170,7 @@ export function main(){
   value4.innerHTML = defaultValue4;
   coupePosx4.addEventListener("input", () => {
     value4.innerHTML = coupePosx4.value;
-    plane2.material.opacity = (coupePosx4.value)/100;
+    plane2.material.opacity = coupePosx4.value/100;
   })
 
   let defaultValue3 = 100;
@@ -171,7 +179,16 @@ export function main(){
   value3.innerHTML = defaultValue3;
   coupePosx3.addEventListener("input", () => {
     value3.innerHTML = coupePosx3.value;
-    o.uniforms.heighparam.value.set(coupePosx3.value);
+    uniforms.transparency.value=coupePosx3.value/100.0;
+  })
+
+  let defaultValue5 = 100;
+  let coupePosx5 = document.getElementById("range5");
+  let value5 = document.getElementById("value5");
+  value5.innerHTML = defaultValue5;
+  coupePosx5.addEventListener("input", () => {
+    value5.innerHTML = coupePosx5.value;
+    uniforms2.transparency.value=coupePosx5.value/100.0;
   })
 
   let axeCoupe = document.getElementById("coupexy");
@@ -208,14 +225,7 @@ export function main(){
     return plan ;
   }
 
-  
-  let uniforms = {
-    colorTexture: {value: colorTexture},
-    heighparam: {value: 0}
-  }
-  let uniforms2 = {
-    colorTexture: {value: colorTexture2}
-  }
+
 
   function shader(uniforms){
 
@@ -224,19 +234,20 @@ export function main(){
       transparent: true,
       onBeforeCompile: shader => {
         shader.uniforms.colorTexture = uniforms.colorTexture;
-        shader.uniforms.heighparam = uniforms.heighparam;
+        shader.uniforms.transparency = uniforms.transparency;
         shader.vertexShader = `
-        uniform float heighparam;
+
           varying vec3 vPos;
           ${shader.vertexShader}
         `.replace(
           `#include <fog_vertex>`,
           `#include <fog_vertex>
-          vPos = vec3(position.x,position.y+heighparam,position.z);
+          vPos = vec3(position.x,position.y,position.z);
           `
         );
         shader.fragmentShader = `
         uniform float limits;
+        uniform float transparency;
         uniform sampler2D colorTexture;
           varying vec3 vPos;
           ${shader.fragmentShader}
@@ -245,6 +256,7 @@ export function main(){
           `
           float h = vPos.y;
           vec4 diffuseColor = texture2D(colorTexture, vec2(0, h));
+          diffuseColor.a*=transparency;
           `
           );
         }
@@ -254,18 +266,18 @@ export function main(){
 
 
 
-    let o, o2;
+    let map, map2;
 
     if (sphere1 == 1){
       console.log("A0, B0 & R0");
       // sphereGen(scene1,lines1)
     } else if (datlines1){
-      o = generateMap(datlines1, uniforms, 1);
-      scene.add( o );
-  
+      map = generateMap(datlines1, uniforms, 1);
+      scene.add( map );
+
       let displayO = document.getElementById("displayO");
       displayO.addEventListener("change", () => {
-      o.visible = !o.visible;
+        map.visible = !map.visible;
       })
     }
 
@@ -273,12 +285,12 @@ export function main(){
       console.log("A0, B0 & R0");
       // sphereGen(scene2,lines2)
     } else if (datlines2){
-      o2 = generateMap(datlines2, uniforms2, 2);
-      scene.add( o2 );
-  
+      map2 = generateMap(datlines2, uniforms2, 2);
+      scene.add( map2 );
+
       let displayO2 = document.getElementById("displayO2");
       displayO2.addEventListener("change", () => {
-      o2.visible = !o2.visible;
+        map2.visible = !map2.visible;
       })
     }
 
@@ -335,7 +347,7 @@ export function main(){
         // console.log("numberY : " + numberY);
         // console.log("step : " + step);
         planeHeightmap.rotateX(-Math.PI * 0.5);
-        let o = new THREE.Mesh(planeHeightmap, shader(uniform));
+        let map = new THREE.Mesh(planeHeightmap, shader(uniform));
         let pos = planeHeightmap.attributes.position;
         let uv = planeHeightmap.attributes.uv;
         // console.log("lines : " + lines.length);
@@ -350,12 +362,37 @@ export function main(){
           }
         }
         pos.needsUpdate = true;
-        makePlot(13, "y");
-        return (o);
+        makePlot(30, "x");
+        return (map);
     }
 
+    let defExtend=0;
+    let infiny_extend = document.getElementById("infiny_extend");
+    let extend_value = document.getElementById("extend_value");
+    extend_value.innerHTML = defExtend;
+    infiny_extend.addEventListener("input", () => {
+      // console.log(infiny_extend.value);
+      if(Math.abs(infiny_extend.value-50)<5){
+        return;
+      }
+      defExtend+=infiny_extend.value-50;
+      if(defExtend<0){
+        defExtend=0;
+      }
+      extend_value.innerHTML = defExtend;
+      infiny_extend.value=50;
+      if(map!=undefined)
+      {
+        map.scale.set(1,1+5*defExtend/100.0,1);
+      }
+      if(map2!=undefined)
+      {
+        map2.scale.set(1,1+5*defExtend/100.0,1);
+      }
+    });
 
-    
+
+
   if (document.getElementById ("stat")) {
     document.body.removeChild(document.getElementById ("stat"));
   }
@@ -363,6 +400,7 @@ export function main(){
   stats.showPanel( 0 );
   stats.domElement.style.cssText = 'position:absolute;bottom:0px;right:160px;z-index:99;';
   stats.domElement.id = "stat";
+  stats.domElement.classList.add('hidden');
   document.body.appendChild( stats.dom );
 
   if (document.getElementById ("stat2")) {
@@ -372,6 +410,7 @@ export function main(){
   stats2.showPanel( 1 );
   stats2.domElement.style.cssText = 'position:absolute;bottom:0px;right:80px;z-index:99;';
   stats2.domElement.id = "stat2";
+  stats2.domElement.classList.add('hidden');
   document.body.appendChild( stats2.dom );
 
   if (document.getElementById ("stat3")) {
@@ -381,6 +420,7 @@ export function main(){
   stats3.showPanel( 2 );
   stats3.domElement.style.cssText = 'position:absolute;bottom:0px;right:0px;z-index:99;';
   stats3.domElement.id = "stat3";
+  stats3.domElement.classList.add('hidden');
   document.body.appendChild( stats3.dom );
 
 

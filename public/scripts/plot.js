@@ -20,17 +20,17 @@ export function makePlot(i, axe){
 
     if (axe == "y") {
       for (let index = 0 ; index < numberX1 ; index++){
-        xArray1.push(datlines1[(index*numberY1)+i][1]);
+        xArray1.push(datlines1[(index*numberY1)+i][0]);
         yArray1.push(datlines1[(index*numberY1)+i][3]);
       }
       for (let index = 0 ; index < numberX2 ; index++){
-        xArray2.push(datlines2[(index*numberY2)+i][1]);
+        xArray2.push(datlines2[(index*numberY2)+i][0]);
         yArray2.push(datlines2[(index*numberY2)+i][3]);
       }
     }
 
-    // console.log(xArray1);
-    // console.log(yArray1);
+    console.log(xArray1);
+    console.log(yArray1);
 
     var data = [{
       x: xArray1,
