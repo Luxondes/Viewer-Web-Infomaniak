@@ -4,56 +4,76 @@
 <head>
 	<title>LXD Viewer XML</title>
 	<meta charset="UTF-8">
-	<link rel="stylesheet" href="styles/style.css">
-	<link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
 	<link rel="icon" href="img/logo_lxd.png">
+
+	<!-- css pour icones du menu -->
+	<link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+	<link rel="stylesheet" href="styles/style.css">
+
 	<meta name="description" content="Viewer Near Field Scan">
 	<meta name="keywords" content="luxondes scanphone">
 </head>
 
+<!-- La page est séparée en 2 parties, le menu puis la section avec le rendu -->
 <body>
 	<div class="sidebar">
+
+		<!-- Tête du menu -->
     	<div class="logo-details">
       		<i class='bx bxl-javascript icon'></i>
         	<div class="logo_name">ViewerWeb</div>
-        	<i class='bx bx-menu' id="btn" ></i>
+        	<i class='bx bx-menu' id="menu_button" ></i>
     	</div>
+
+		<!-- Corps du menu -->
 		<ul class="nav-list">
+
+			<!-- Menu data -->
 			<li>
-				<a href="#" id="dataBtn">
+				<a href="#" id="data_button">
 					<i class='bx bx-folder-open' ></i>
 					<span class="links_name">Data</span>
 				</a>
 				<span class="tooltip">Data</span>
 			</li>
+
+			<!-- Menu option -->
 			<li>
-				<a href="#" id="optionBtn">
+				<a href="#" id="option_button">
 					<i class='bx bx-slider'></i>
 					<span class="links_name">Option</span>
 				</a>
 				<span class="tooltip">Option</span>
 			</li>
+
+			<!-- Menu files -->
 			<li>
-				<a href="#" id="filesBtn">
+				<a href="#" id="files_button">
 					<i class='bx bx-file' ></i>
 					<span class="links_name">Files</span>
 				</a>
 				<span class="tooltip">Files</span>
 			</li>
+
+			<!-- Menu graph -->
 			<li>
-				<a href="#" id="graphBtn">
+				<a href="#" id="graph_button">
 					<i class='bx bx-line-chart' ></i>
 					<span class="links_name">Graph</span>
 				</a>
 				<span class="tooltip">Graph</span>
 			</li>
+
+			<!-- Menu setting -->
 			<li>
-				<a href="#" id="settingBtn">
+				<a href="#" id="setting_button">
 					<i class='bx bx-cog' ></i>
 					<span class="links_name">Setting</span>
 				</a>
 				<span class="tooltip">Setting</span>
 			</li>
+
+			<!-- Bas du menu -->
 			<li class="profile">
 				<div class="profile-details">
 				<img src="img/luxondes.jpg" alt="">
@@ -63,145 +83,157 @@
 				</div>
 				<i class='bx bx-log-out' id="log_out" ></i>
 			</li>
+
 		</ul>
 	</div>
 
+	<!-- la 2eme partie de la page avec le rendu -->
+	<!-- pour simplifier le css, les menus ouvrant survolent cette partie avec le rendu -->
 	<section class="home-section" id="section">
 
+		<!-- menu ouvrant data -->
 		<div id="data" class="hidden">
 			<p>Data:</p><br>
 			<p>Upload an image with the files dialogs or by dragging and dropping image onto the datas zones</p>
 			<hr>
+			<!-- partie data 1 -->
 			<div id="data1">
 				<p>Data 1</p>
 				<form>
-					<input type="file" id="fileElemAdd" multiple accept="*">
-					<label class="button" for="fileElemAdd">Add</label>
+					<input type="file" id="add_file_1" multiple accept="*">
+					<label class="button" for="add_file_1">Add</label>
 				</form>
 				<form>
-					<label class="button" id="fileElemRemove1">Remove</label>
+					<label class="button" id="remove_file_1">Remove</label>
 				</form>
-
-				<div class="gallery" id="gallery1"></div>
+				<div class="gallery" id="gallery_1"></div>
 				<hr>
 			</div>
+			<!-- partie data 2 -->
 			<div id="data2">
 				<p>Data 2</p>
 				<form>
-					<input type="file" id="fileElemAdd2" multiple accept="*">
-					<label class="button" for="fileElemAdd2">Add</label>
+					<input type="file" id="add_file_2" multiple accept="*">
+					<label class="button" for="add_file_2">Add</label>
 				</form>
 				<form>
-					<label class="button" id="fileElemRemove2">Remove</label>
+					<label class="button" id="remove_file_2">Remove</label>
 				</form>
-
-				<div class="gallery" id="gallery2"></div>
+				<div class="gallery" id="gallery_2"></div>
 				<hr>
 			</div>
-
-
-
-	
-			
-
 		</div>
 
+		<!-- menu ouvrant option -->
 		<div id="option" class="hidden">
 			<p>Option:</p><br>
 			<p>Options to manipulate the render...</p><br>
 			<hr>
-			<input type="checkbox"  id="displayGrid" checked> Display grid<br>
+			<input type="checkbox"  id="display_grid" checked> Display grid<br>
 			<hr>
-			<div id="render1Options" class="hidden"z>
-				<input type="checkbox" id="displayImg1" checked> Display image 1<br>
-				<input type="range" name="" id="range2" min="0" max="100" value="100">
-				<span id="value2"></span><br>
-				<input type="checkbox" id="displayO" checked> Display heightmap 1<br>
-				<input type="range" name="" id="range3" min="0" max="100" value="100">
-				<span id="value3"></span><br>
-				<canvas id="heightgrd" width="64" height="256"></canvas><br>
+			<!-- partie option data 1 -->
+			<div id="render_options_1" class="hidden">
+				<input type="checkbox" id="display_image_1" checked> Display image 1<br>
+				<input type="range" name="" id="range_input_image_1" min="0" max="100" value="100">
+				<span id="range_value_image_1"></span><br>
+				<input type="checkbox" id="display_model_1" checked> Display heightmap 1<br>
+				<input type="range" name="" id="range_input_model_1" min="0" max="100" value="100">
+				<span id="range_value_model_1"></span><br>
+				<canvas id="heightgrd_1" width="64" height="256"></canvas><br>
 				<hr>
 			</div>
-			<div id="render2Options" class="hidden">
-				<input type="checkbox"  id="displayImg2" checked> Display image 2<br>
-				<input type="range" name="" id="range4" min="0" max="100" value="100">
-				<span id="value4"></span><br>
-				<input type="checkbox"  id="displayO2" checked> Display heightmap 2<br>
-				<input type="range" name="" id="range5" min="0" max="100" value="100">
-				<span id="value5"></span><br>
-				<canvas id="heightgrd2" width="64" height="256"></canvas>
+			<!-- partie option data 2 -->
+			<div id="render_options_2" class="hidden">
+				<input type="checkbox"  id="display_image_2" checked> Display image 2<br>
+				<input type="range" name="" id="range_input_image_2" min="0" max="100" value="100">
+				<span id="range_value_image_2"></span><br>
+				<input type="checkbox"  id="display_model_2" checked> Display heightmap 2<br>
+				<input type="range" name="" id="range_input_model_2" min="0" max="100" value="100">
+				<span id="range_value_model_2"></span><br>
+				<canvas id="heightgrd_2" width="64" height="256"></canvas>
 				<hr>
 			</div>
-			<div id="render3Options" class="hidden">
+			<!-- partie autres option 3 -->
+			<div id="render_options_3" class="hidden">
 				<input type="range" name="" id="infiny_extend" min="0" max="100" value="50">
 				<span id="extend_value"></span><br>
 			</div>
 		</div>
 
+		<!-- menu ouvrant files -->
 		<div id="files" class="hidden">
 			<p>Files:</p><br>
 			<p>Files used to set the render...</p>
 			<hr>
-			<div id="file1" class="hidden">
-				<div id="container1"></div>
+			<!-- partie files data 1 -->
+			<div id="file_1" class="hidden">
+				<div id="container_1"></div>
 				<hr>
 			</div>
-			<div id="file2" class="hidden">
-				<div id="container2"></div>
+			<!-- partie files data 2 -->
+			<div id="file_2" class="hidden">
+				<div id="container_2"></div>
 				<hr>
 			</div>
 		</div>
 
+		<!-- menu ouvrant graph -->
 		<div id="graph" class="hidden" style="width: 450px;">
 			<p>Graph:</p><br>
 			<p>Graphs... and options...</p><br>
 			<hr>
+			<!-- balise du graphe -->
 			<div id="plot"></div><br>
-			<div id="coupeOptions" class="hidden">
-				<input type="checkbox"  id="displayCoupe"> Display coupe<br>
-				<input type="checkbox" id="coupexy"> X/Y<br>
-				<input type="range" name="" id="range" min="-25" max="25" value="-23">
-				<span id="value"></span>
+			<!-- options du graphe -->
+			<div id="coupe_options" class="hidden">
+				<input type="checkbox"  id="display_coupe"> Display coupe<br>
+				<input type="checkbox" id="coupe_X_Y"> X/Y<br>
+				<input type="range" name="" id="range_input_coupe" min="-25" max="25" value="-23">
+				<span id="range_value_coupe"></span>
 			</div>
 		</div>
 
+		<!-- menu ouvrant setting -->
 		<div id="setting" class="hidden">
 			<p>Setting:</p><br>
 			<p>Page settings</p><br>
 			<hr>
-			<input type="checkbox"  id="displayStats"> Display stats
+			<input type="checkbox"  id="display_stats"> Display stats
 		</div>
 
+		<!-- div recouvrant tout le canvas du rendu pour le drag and drop -->
 		<div id="drop-area" class="hidden"></div>
 	</section>
 
+	<!-- ensemble des variables globales au projet -->
 	<script>
-		let datDropNb = 0;
-		let sphere1 = 0;
-		let sphere2 = 0;
-		let datlines1;
-		let datlines2;
-		let sizeX1 = 1;
-		let sizeY1 = 1;
-		let sizeX2 = 1;
-		let sizeY2 = 1;
-		let numberX1;
-		let numberX2;
-		let numberY1;
-		let numberY2;
-		let isEmpty1 = true;
-		let isEmpty2 = true;
+		let is_sphere_1 = false;     //variable pour savoir si les data 1 sont pour une sphere
+		let is_sphere_2 = false;     //variable pour savoir si les data 2 sont pour une sphere
+		let data_tab_1;     //tableau avec les valeurs du dat de data 1
+		let data_tab_2;     //tableau avec les valeurs du dat de data 2
+		let size_X_1 = 1;     //taille en x de l'image de data 1
+		let size_Y_1 = 1;     //taille en y de l'image de data 1  _|  Par défaut, un ratio
+		let size_X_2 = 1;     //taille en x de l'image de data 2   \  d'image de 1x1 / carré
+		let size_Y_2 = 1;     //taille en y de l'image de data 2
+		let lines_number_X_1;     //variable du nombre de lignes en x du dat de data 1
+		let lines_number_Y_1;     //variable du nombre de colonnes en y du dat de data 1
+		let lines_number_X_2;     //variable du nombre de lignes en x du dat de data 2
+		let lines_number_Y_2;     //variable du nombre de colonnes en y du dat de data 2
+		let is_data_1_empty = true;     //variable pour savoir si l'emplacement data 1 est vide ou non  _|  utile pour les
+		let is_data_2_empty = true;     //variable pour savoir si l'emplacement data 2 est vide ou non   \  boutons remove
 	</script>
 
-	<script src="lib/dat.gui.min.js"></script>
+	<!-- ensemble des librairies -->
 	<script src="lib/stats.min.js"></script>
 	<script src="lib/plotly.min.js"></script>
-	<script src="lib/Noise.js"></script>
+
 	<script type="importmap">
 		{
 			"imports": { "three": "./lib/three-module.js" }
 		}
 	</script>
+
+	<!-- ensemble des scripts -->
 	<script type="module" src="scripts/sidebar.js"></script>
 	<script type="module" src="scripts/heightMap.js"></script>
 	<script type="module" src="scripts/fileManager.js"></script>

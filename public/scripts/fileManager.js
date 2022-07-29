@@ -1,40 +1,45 @@
-import { main } from './heightMap.js';
-import { makePlot } from './plot.js';
+//script de la gestion des fichiers
+import { mainRender } from './heightMap.js';
 
-let dropArea = document.getElementById("drop-area");
-let fileElem = document.getElementById ("fileElemAdd");
-let fileElem2 = document.getElementById ("fileElemAdd2");
+let drop_area = document.getElementById("drop-area");
+let add_file_1 = document.getElementById ("add_file_1");
+let add_file_2 = document.getElementById ("add_file_2");
 const section = document.getElementById("section")
 
-let dataDropNb = 0;
+let drop_data_number = 0;     // variable de l'emplacement de drop des data
 
-// ajout des evenements apres avoir ajouté ou zip (drag&drop ou gestionnaire fichier)
-dropArea.addEventListener('drop', handleDrop, false);
-fileElem.addEventListener('change', handleDl1, false);
-fileElem2.addEventListener('change', handleDl2, false);
+// ajout des événements apres avoir déposé un fichier en drag and drop ou avec un bouton
+drop_area.addEventListener('drop', handleDrop, false);
+add_file_1.addEventListener('change', handleDl1, false);
+add_file_2.addEventListener('change', handleDl2, false);
 
-// récupération files gestionnaire fichier
+// fonction de récupération fichiers gestionnaire fichier bouton data 1
 function handleDl1(){
   let files = this.files;
-  dataDropNb = 1;
+  drop_data_number = 1;
   handleFiles(files, 1);
 }
+// fonction de récupération fichiers gestionnaire fichier bouton data 2
 function handleDl2(){
   let files = this.files;
-  dataDropNb = 0;
+  drop_data_number = 0;
   handleFiles(files, 2);
 }
 
-// récupération files drag&drop
+// fonction de récupération fichiers drag and drop
 function handleDrop(e) {
   let dt = e.dataTransfer;
   let files = dt.files;
-  dataDropNb = (dataDropNb +1) % 2;
+  // modification emplacement prochain fichier drop (data 1 ou data2)
+  drop_data_number = (drop_data_number +1) % 2;
 
-  handleFiles(files, 2-dataDropNb);
+  handleFiles(files, 2-drop_data_number);
 }
 
-function htmlspecialchars(s){
+
+
+// fonction pour transformer les xml du format str à un ensemble de balisages lisible par html
+function htmlSpecialChars(s){
 	return (typeof s=='string')?s.replace(/\</g,'&lt;')
 								 .replace(/\>/g,'&gt;')
 								 .replace(/&lt;/g,'<span>&lt;')
@@ -45,7 +50,10 @@ function htmlspecialchars(s){
 								 :'';
 }
 
-function handleFiles(files, dataNb) {
+
+
+// fonction de traitement des fichiers
+function handleFiles(files, data_number) {
     const formData = new FormData(); // création formData
     files = [...files];
     files.forEach(file => formData.append("files", file)); // ajout des fichiers au formData
@@ -60,21 +68,21 @@ function handleFiles(files, dataNb) {
       })
       .then(json =>
       {
-        loadFiles(json.files, dataNb); // chargement fichiers
+        loadFiles(json.files, data_number); // chargement fichiers
       })
       .catch((err) => ("Submit Error", err)); // retour d'erreur
   }
 
-  function loadFiles(urls, dataNb)
+  function loadFiles(urls, data_number)
   {
-
     // récupére puis traite les url en fonction des types de fichiers
     urls.forEach(url =>
     {
       switch(url.split('.').at(-1))
       {
-        case 'xml':
+        case 'xml':     // cas d'un fichier xml
 
+            // envoi du fichier xml pour lecture coté serveur
             let data = JSON.stringify({
                 "urls": url
             });
@@ -93,46 +101,56 @@ function handleFiles(files, dataNb) {
             })
             .then(json =>
             {   
-                let xmlTexte = json.texte;
+                // traitement réponse au format str
+                let xml_texte = json.texte;
                 let parser = new DOMParser();
-                let xmlDoc = parser.parseFromString(xmlTexte,"text/xml");
+                // traitement texte pour interprétation des balises
+                let xml_doc = parser.parseFromString(xml_texte,"text/xml");
 
-                let a0=getStringValue(xmlDoc,"Data","A0");
-                let b0 = getStringValue(xmlDoc,"Data","B0");
-                let r0 =getStringValue(xmlDoc,"Data","R0");
-                if (a0 && b0 && r0) {
-                  if (dataNb == 1){sphere1 = 1;}
-                  if (dataNb == 2){sphere2 = 1;}
+                // on regarde si les balises A0, B0 et R0 existent pour savoir si le fichier est une sphere
+                let A0=getStringValue(xml_doc,"Data","A0");
+                let B0 = getStringValue(xml_doc,"Data","B0");
+                let R0 =getStringValue(xml_doc,"Data","R0");
+
+                // si fichier est une Sphere, on modifie les varibales globales l'informant
+                if (A0 && B0 && R0) {
+                  if (data_number == 1){is_sphere_1 = true;}      // __| on modifie les valeurs en fonction
+                  if (data_number == 2){is_sphere_2 = true;}      //   | de l'emplacement des data
+                // sinon, on modifie les variables à l'inverse
                 }else{
-                  if (dataNb == 1){sphere1 = 0;}
-                  if (dataNb == 2){sphere2 = 0;}
+                  if (data_number == 1){is_sphere_1 = false;}      // __| on modifie les valeurs en fonction
+                  if (data_number == 2){is_sphere_2 = false;}      //   | de l'emplacement des data
                 }
 
-                let container = document.getElementById("container"+dataNb);
+                // on modifie le contenu du sous-menu file avec le contenu de l'xml
+                let container = document.getElementById("container_"+data_number);
                 if (container.firstElementChild){container.removeChild(container.firstElementChild);}
                 let text = document.createElement('code');
                 text.setAttribute("id","xmlText");
-                text.innerHTML =  htmlspecialchars(xmlTexte);
+                // on utilise la fonction de formatage plus haut
+                text.innerHTML =  htmlSpecialChars(xml_texte);
                 container.appendChild(text);
 
-                let image=getStringValue(xmlDoc,"Component","Image","Path");
-                // console.log(" "+ image);
+                // on va chercher l'image correpsondante et on modifie l'image du sous-menu data
+                let image=getStringValue(xml_doc,"Component","Image","Path");
                 if (image) {
-                  let gallery = document.getElementById("gallery"+dataNb);
+                  let gallery = document.getElementById("gallery_"+data_number);
                   if (gallery.firstElementChild){gallery.removeChild(gallery.firstElementChild);}
                   let element = document.createElement('img');
-                  element.setAttribute("id","img"+dataNb);
+                  element.setAttribute("id","img"+data_number);
                   element.setAttribute("src","../files/"+image);
                   gallery.appendChild(element);
-                  let x = parseInt(getStringValue(xmlDoc,"Component","Image","Xsize"));
-                  let y = parseInt(getStringValue(xmlDoc,"Component","Image","Ysize"));
-                  if (dataNb == 1){sizeX1 = x; sizeY1 = y;}
-                  if (dataNb == 2){sizeX2 = x; sizeY2 = y;}
+                  // on modifie ensuite les variables globales des dimensions de l'image
+                  let x = parseInt(getStringValue(xml_doc,"Component","Image","Xsize"));
+                  let y = parseInt(getStringValue(xml_doc,"Component","Image","Ysize"));
+                  if (data_number == 1){size_X_1 = x; size_Y_1 = y;}      // __| on modifie les valeurs en fonction
+                  if (data_number == 2){size_X_2 = x; size_Y_2 = y;}      //   | de l'emplacement des data
                 }
 
-                let dat=getStringValue(xmlDoc,"Data","Measurement","Data_files");
-                // console.log(" "+ dat);
+                // on va chercher l'url du fichier dat
+                let dat=getStringValue(xml_doc,"Data","Measurement","Data_files");
                 if (dat){
+                  // envoi du fichier dat pour lecture coté serveur
                   let datad = JSON.stringify({
                     "urls": "files/"+dat
                   });
@@ -150,35 +168,45 @@ function handleFiles(files, dataNb) {
                     })
                     .then(json =>
                     { 
-                      let datTexte = json.texte;
+                      // traitement réponse au format str
+                      let dat_texte = json.texte;
                       
-                      let lines = datTexte.trim().split('\n');
+                      // transormation du str dat en matrice
+                      let lines = dat_texte.trim().split('\n');
                       for (let i = 0; i < lines.length; i++) {
                         lines[i] = lines[i].split('\t');
                         for (let j = 0; j < lines[i].length; j++) {
                           lines[i][j] = parseFloat(lines[i][j]);
                         }
                       }
-                      if (dataNb == 1){datlines1 = lines}
-                      if (dataNb == 2){datlines2 = lines}
+                      // modification de la variable globale concernant la matrice en fonction de l'emplacement des data
+                      if (data_number == 1){data_tab_1 = lines}
+                      if (data_number == 2){data_tab_2 = lines}
 
-                      if (dataNb == 1){isEmpty1 = false}
-                      if (dataNb == 2){isEmpty2 = false}
+                      // modification de la variable globale concernant l'existence de data en fonction de l'emplacement des data
+                      if (data_number == 1){is_data_1_empty = false}
+                      if (data_number == 2){is_data_2_empty = false}
 
-                      document.getElementById("coupeOptions").classList.remove('hidden');
-                      document.getElementById("render3Options").classList.remove('hidden');
-                      if (dataNb == 1){
-                        document.getElementById("render1Options").classList.remove('hidden');
-                        document.getElementById("file1").classList.remove('hidden');
+                      //affichage des menus apres drop d'un fichier
+
+                      // affichage coupe et options
+                      document.getElementById("coupe_options").classList.remove('hidden');
+                      // affichage de l'input range infini de la hauteur des points de la map
+                      document.getElementById("render_options_3").classList.remove('hidden');
+                      // si l'emplacement des data = 1, affichage des options du rendu 1
+                      if (data_number == 1){
+                        document.getElementById("render_options_1").classList.remove('hidden');
+                        document.getElementById("file_1").classList.remove('hidden');
                     }
-                      if (dataNb == 2){
-                        document.getElementById("render2Options").classList.remove('hidden');
-                        document.getElementById("file2").classList.remove('hidden');
+                      // si l'emplacement des data = 2, affichage des options du rendu 2
+                      if (data_number == 2){
+                        document.getElementById("render_options_2").classList.remove('hidden');
+                        document.getElementById("file_2").classList.remove('hidden');
                     }
 
-
+                      // on supprime le rendu pour le recommencer avec les data modifiées
                       section.removeChild(document.getElementById ("canvas"));
-                      main();
+                      mainRender();
                     })
                     .catch((err) => ("Submit Error", err)); // retour d'erreur
                 }
@@ -197,6 +225,9 @@ function handleFiles(files, dataNb) {
       }
     });
   }
+
+
+  // fonction pour chercher balises dans le xml 
   function getStringValue(){
     if(arguments.length>1){
       let sub_element=arguments[0].getElementsByTagName(arguments[1])[0];
@@ -221,6 +252,7 @@ function handleFiles(files, dataNb) {
     return null;
   }
 
+  // fonction pour supprimer les fichiers uploadés coté serveur
   async function deleteSignal(){
     fetch("./delete_signal", { // envoi du signal coté serveur pour supprimer fichiers uploadés
       method:'POST',
